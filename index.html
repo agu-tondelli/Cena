@@ -147,29 +147,91 @@ aside h2{font:900 28px/1.05 Nunito,sans-serif;margin:0 0 4px}
 footer{background:var(--panel);border-top:1px solid var(--line);font-size:14px;color:var(--soft)}
 footer .wrap{padding-top:18px;padding-bottom:24px}
 footer p{margin:0 0 6px}
+
+/* ---- polish v9 ---- */
+.tabs a[aria-selected=true] .ti{color:var(--olive)}
+.ti{display:inline-flex}.ti svg{width:22px;height:22px}
+.vt{letter-spacing:-.025em}
+.plan{gap:16px}
+.pday{border:0;border-radius:20px;background:var(--panel);box-shadow:0 0 0 1px var(--line),0 6px 20px -12px rgba(0,0,0,.35)}
+.pday header{background:var(--c);padding:12px 16px;align-items:center}
+.pday header b{font:900 22px/1.1 Nunito,sans-serif;letter-spacing:-.01em}
+.pday header b em{font-style:normal;opacity:.8;font-weight:800}
+.pick{min-width:30px;height:30px;padding:0 10px;border-radius:999px;background:rgba(255,255,255,.95);color:var(--c);font:900 15px/30px Nunito,sans-serif;text-align:center}
+.pday .in{padding:14px 16px 16px;gap:14px}
+.ctx2{display:grid;gap:8px;font-weight:700;font-size:15px;line-height:1.35}
+.ctx2>div{padding-left:12px;border-left:3px solid color-mix(in srgb,var(--c) 55%,transparent)}
+.lbl{display:block;font-size:11.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--soft);margin-bottom:1px}
+.opts{align-items:stretch;gap:10px}
+.opt{position:relative;border:1.5px solid var(--line);border-radius:16px;background:var(--bg);padding:12px 14px 14px;transition:border-color .15s,background .15s,box-shadow .15s}
+.opt:not(.dl)::after{content:"";position:absolute;top:12px;right:12px;width:20px;height:20px;border-radius:50%;border:2px solid var(--line);box-sizing:border-box}
+.opt[aria-pressed=true]{border-color:var(--c);background:color-mix(in srgb,var(--c) 10%,var(--bg));box-shadow:0 0 0 1px var(--c)}
+.opt[aria-pressed=true]:not(.dl)::after{border:0;background:var(--c) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5.5 10.5l3 3 6-7' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/100% no-repeat}
+.ol{display:flex;align-items:center;gap:8px;font:800 16px/1.2 Nunito,sans-serif;padding-right:24px;margin-bottom:6px}
+.ol i{font-style:normal;flex:none;width:24px;height:24px;border-radius:8px;background:var(--c);color:#fff;font:900 14px/24px Nunito,sans-serif;text-align:center}
+.opt small{font-size:14px;line-height:1.35;color:var(--soft)}
+.opt .hk{margin:8px 0 10px;font-size:13.5px;font-weight:600;color:var(--ink)}
+.opt .extra{border-radius:999px;padding:4px 10px;font-size:12.5px;background:color-mix(in srgb,var(--jue) 16%,var(--bg));color:color-mix(in srgb,var(--jue) 70%,var(--ink))}
+
+.opt.dl{min-height:46px;border-style:dashed;background:transparent;color:var(--soft);font-weight:800;padding:8px 14px}
+.opt.dl[aria-pressed=true]{border-style:solid;color:var(--ink)}
+@media(hover:hover){.opt:not(:disabled):hover{border-color:color-mix(in srgb,var(--c) 60%,var(--line))}}
+.btn{border-radius:14px}
+.btn.big{min-height:58px;box-shadow:0 8px 20px -10px var(--olive)}
+@media (prefers-reduced-motion:reduce){.opt,.tabs a{transition:none}}
+
+/* ---- header v10: slim brand band + tools on page ---- */
+header{background:var(--hdr);color:#fff}
+.top{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px max(4vw,16px) 16px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:46px;height:46px;flex:none;filter:drop-shadow(0 2px 6px rgba(0,0,0,.18))}
+h1{font:900 30px/1 Nunito,sans-serif;letter-spacing:-.02em;margin:0}
+.sub{display:block;margin:3px 0 0;font-size:14px;line-height:1.3;font-weight:600;opacity:.85}
+.seg{height:36px;background:rgba(0,0,0,.18);border-radius:10px;padding:3px}
+.seg button{height:30px;min-width:38px;font-size:14px;border-radius:7px;padding:0 10px}
+.tools{padding-top:16px}
+.ctrls{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;max-width:560px}
+.ctrls label>span:first-child{display:none}
+.ctrls select{width:100%}
+select{height:46px;background-color:var(--panel);color:var(--ink);border:1px solid var(--line)}
+:root{--chev:#5f8f1e}
+.tabsbar{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);padding:10px 0;border-bottom:1px solid var(--line)}
+.tabs{display:flex;gap:4px;padding:4px;background:var(--panel);border:1px solid var(--line);border-radius:14px;max-width:560px}
+.tabs a{flex:1 1 0;min-height:42px;flex-direction:row;gap:7px;border-radius:10px;background:transparent;color:var(--soft);font-size:15px;font-weight:800;transition:background .15s,color .15s}
+.tabs a[aria-selected=true]{background:var(--olive);color:#fff;box-shadow:0 4px 12px -6px var(--olive)}
+.ti{display:inline-flex}.ti svg{width:20px;height:20px}
+@media(max-width:600px){.top{padding:10px max(4vw,16px) 12px}.logo{width:40px;height:40px}h1{font-size:26px}.sub{font-size:13px}.tools{padding-top:12px}.tabs a{min-height:42px;font-size:14px;gap:5px;flex-direction:row}.tabs a .ti{font-size:inherit}.ti svg{width:18px;height:18px}}
+.views{padding-top:18px}
+/* option card fixes */
+.opt:not(.dl){display:flex;flex-direction:column;justify-content:flex-start}
+.ol{padding-right:30px}
+.tabs a[aria-selected=true] .ti{color:inherit}
+.tabs a[aria-selected=true]{background:var(--hdr)}
+.brand{flex:1 1 auto;min-width:0}.brand>div{min-width:0}.langw{flex:none}
+@media(max-width:600px){.opts{grid-template-columns:minmax(0,1fr)}.opt{min-height:0}}
 </style>
 </head>
 <body>
 <header>
-  <div class="wrap">
-    <div class="top">
-      <div class="brand">
-        <h1>Cena</h1>
-        <p class="sub" id="t-sub">Planificá la semana, armá la lista del súper y prepará la cena.</p>
-      </div>
-      <div class="ctrls">
+  <div class="wrap top">
+    <div class="brand"><svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#fff"/><circle cx="24" cy="24" r="15" fill="none" stroke="#e3ecd2" stroke-width="2"/><g transform="translate(24 24) rotate(-35)"><path d="M0-10C6-6 6 6 0 10-6 6-6-6 0-10Z" fill="#7cb342"/><path d="M0-9V9" stroke="#4f7a17" stroke-width="1.2" stroke-linecap="round"/></g><circle cx="30" cy="16.5" r="3.4" fill="#3f6512"/></svg><div><h1>Cena</h1>
+      <p class="sub" id="t-sub">Planificá la semana, armá la lista del súper y prepará la cena.</p></div></div>
+    <div class="langw"><span class="seg" role="group" aria-label="Idioma"><button id="l-es" aria-pressed="true">ES</button><button id="l-ca" aria-pressed="false">CA</button></span><span id="t-lang" hidden>Idioma</span></div>
+  </div>
+</header>
+<div class="wrap tools">
+  <div class="ctrls">
         <label><span id="t-menu">Menú</span><select id="variant" aria-label="Menú"></select></label>
         <label><span id="t-ppl">Personas</span><select id="people" class="ppl" aria-label="Personas"><option value="2">👥 2</option><option value="3">👥 3</option><option value="4" selected>👥 4</option><option value="5">👥 5</option><option value="6">👥 6</option></select></label>
       </div>
-      <div class="langw"><span class="seg" role="group" aria-label="Idioma"><button id="l-es" aria-pressed="true">ES</button><button id="l-ca" aria-pressed="false">CA</button></span><span id="t-lang" hidden>Idioma</span></div>
-    </div>
-    <nav class="tabs" role="tablist" aria-label="Secciones">
-      <a href="#semana" id="tab-semana" role="tab"><span class="ti">📅</span><span id="t-tabsem">Semana</span></a>
-      <a href="#super" id="tab-super" role="tab"><span class="ti">🛒</span><span id="t-tabsup">Súper</span></a>
-      <a href="#cocinar" id="tab-cocinar" role="tab"><span class="ti">👩‍🍳</span><span id="t-tabcoc">A cocinar</span></a>
+</div>
+<div class="tabsbar"><div class="wrap">
+  <nav class="tabs" role="tablist" aria-label="Secciones">
+      <a href="#semana" id="tab-semana" role="tab"><span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg></span><span id="t-tabsem">Semana</span></a>
+      <a href="#super" id="tab-super" role="tab"><span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2.2l2.3 11h10.8l2.2-8H6.4"/><circle cx="9.5" cy="19.5" r="1.4"/><circle cx="17" cy="19.5" r="1.4"/></svg></span><span id="t-tabsup">Súper</span></a>
+      <a href="#cocinar" id="tab-cocinar" role="tab"><span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11h15v3a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z"/><path d="M18 12.5h3"/><path d="M8 4c-.6 1 .6 2 0 3M12 4c-.6 1 .6 2 0 3"/></svg></span><span id="t-tabcoc">A cocinar</span></a>
     </nav>
-  </div>
-</header>
+</div></div>
 <main>
   <div class="wrap views">
     <section id="v-semana" hidden></section>
@@ -335,10 +397,11 @@ function renderTop(){const t=tr();document.documentElement.lang=st.lang;
  const MN=st.lang==='es'?MON_ES:MON_CA,a0=DAYS[0],a4=DAYS[4];$('t-f1').textContent=t.f1.replace('{r}','del '+a0.d+(a0.m!==a4.m?' de '+MN[a0.m]:'')+' al '+a4.d+' de '+MN[a4.m]);
  $('variant').innerHTML=V.map(x=>`<option value="${x[0]}"${x[0]===st.v?' selected':''}>${st.lang==='es'?x[2]:x[1]}</option>`).join('');
  $('people').value=String(st.p);$('l-es').setAttribute('aria-pressed',st.lang==='es');$('l-ca').setAttribute('aria-pressed',st.lang==='ca')}
+const ol=x=>{const m=x.split(' · ');return m.length>1?`<span class="ol"><i>${m[0]}</i>${m[1]}</span>`:`<span class="ol">${x}</span>`};
 function optBtns(i,cls){const t=tr();const ch=chOf(i);const ex=extras(i);const altD=dishesFor(i,1).find(k=>D[k].h);const hook=altD?D[altD].h[st.lang==='es'?0:1]:'';const exTxt=ex.length?'<span class="extra">'+t.only+' '+ex.map(k=>SH[k]?SH[k][st.lang==='es'?0:1]:nm(k)).join(t.and)+'</span>':'<span class="extra">'+t.same+'</span>';
- return `<button class="${cls}" data-w="${i}" data-v="0" aria-pressed="${ch===0}">${t.a}<small>${dn(dishesFor(i,0))}</small></button><button class="${cls}" data-w="${i}" data-v="1" aria-pressed="${ch===1}"${soft()?' disabled':''}>${t.b}<small>${soft()?t.noB:dn(dishesFor(i,1))+(hook?'<span class="hk">'+hook+'</span>':'')+exTxt}</small></button><button class="${cls} dl" data-w="${i}" data-v="2" aria-pressed="${ch===2}" aria-label="${t.c}">${ICO}<span>${t.c}</span></button>`}
+ return `<button class="${cls}" data-w="${i}" data-v="0" aria-pressed="${ch===0}">${ol(t.a)}<small>${dn(dishesFor(i,0))}</small></button><button class="${cls}" data-w="${i}" data-v="1" aria-pressed="${ch===1}"${soft()?' disabled':''}>${ol(t.b)}<small>${soft()?t.noB:dn(dishesFor(i,1))+(hook?'<span class="hk">'+hook+'</span>':'')+exTxt}</small></button><button class="${cls} dl" data-w="${i}" data-v="2" aria-pressed="${ch===2}" aria-label="${t.c}">${ICO}<span>${t.c}</span></button>`}
 function renderSemana(){const t=tr();
- $('v-semana').innerHTML=`${WEEKEND?`<p class="note" style="margin:0 0 10px">${t.wkend}</p>`:''}<h2 class="vt">${t.semT}</h2><p class="note">${t.semSub}</p><ul class="plan">${DAYS.map((d,i)=>`<li class="pday" style="--c:var(${d.c})"><header><b>${d[st.lang]} ${d.d}</b><span>${has(i)?'':t.pend}</span></header><div class="in">${has(i)?`<p class="lun" style="margin:0">🏫 ${t.lunch}: <b>${lunchTxt(i)}</b><br>💡 ${t.sug}: <b>${soft()?t.noneShort:schoolTxt(i)}</b></p><div class="opts">${optBtns(i,'opt')}</div>`:`<p class="lun" style="margin:0">${t.pendP}</p>`}</div></li>`).join('')}</ul><a class="btn big linkbtn" style="justify-content:center" href="#super" id="gobuild">${t.build}</a>`}
+ $('v-semana').innerHTML=`${WEEKEND?`<p class="note" style="margin:0 0 10px">${t.wkend}</p>`:''}<h2 class="vt">${t.semT}</h2><p class="note">${t.semSub}</p><ul class="plan">${DAYS.map((d,i)=>`<li class="pday" style="--c:var(${d.c})"><header><b>${d[st.lang]} <em>${d.d}</em></b><span class="pick">${has(i)?['A','B','🛵'][chOf(i)]:t.pend}</span></header><div class="in">${has(i)?`<div class="ctx2"><div><span class="lbl">${t.lunch}</span>${lunchTxt(i)}</div><div><span class="lbl">${t.sug}</span>${soft()?t.noneShort:schoolTxt(i)}</div></div><div class="opts">${optBtns(i,'opt')}</div>`:`<p class="lun" style="margin:0">${t.pendP}</p>`}</div></li>`).join('')}</ul><a class="btn big linkbtn" style="justify-content:center" href="#super" id="gobuild">${t.build}</a>`}
 function shopData(){const tot={};DAYS.forEach((d,i)=>{dishesFor(i,chOf(i)).forEach(k=>D[k].i.forEach(x=>{const kk=sub(x[0]);tot[kk]=(tot[kk]||0)+x[1]*st.p/4}))});return tot}
 function renderSuper(){const t=tr();$('supsub').textContent=t.supSub.replace('{n}',st.p);
  $('shopsum').innerHTML=DAYS.map((d,i)=>{const ds=dishesFor(i,chOf(i));return `<li style="--c:var(${d.c})"><span class="dot"></span><span><b>${d[st.lang].slice(0,3)} ${d.d}</b> · ${!has(i)?t.pend:ds.length?dn(ds):'Delivery 🛵'}</span></li>`}).join('');
@@ -368,7 +431,7 @@ document.addEventListener('click',e=>{const el=e.target.closest('button');if(!el
  if(el.id==='copy'){const m=$('copied');try{navigator.clipboard.writeText(listText()).then(()=>{m.textContent=tr().copied;m.hidden=false}).catch(()=>{m.textContent=tr().nocopy;m.hidden=false})}catch(err){m.textContent=tr().nocopy;m.hidden=false}}});
 document.addEventListener('change',e=>{const el=e.target;if(el.id==='variant'){st.v=el.value;render()}else if(el.id==='people'){st.p=+el.value;render()}else if(el.dataset.k){st.done[el.dataset.k]=el.checked;el.closest('label').classList.toggle('done',el.checked);save()}});
 render();
-const APPV='2026-11-23-8';const LOADDAY=iso(new Date());
+const APPV='2026-11-23-10';const LOADDAY=iso(new Date());
 const checkUpdate=()=>{if(iso(new Date())!==LOADDAY){location.reload();return}try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.v&&j.v!==APPV)location.reload()}).catch(()=>{})}catch(e){}};
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
 window.addEventListener('pageshow',e=>{if(e.persisted)checkUpdate()});
