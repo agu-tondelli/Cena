@@ -237,6 +237,10 @@ details.plat[open] summary{margin-bottom:8px;color:var(--ink)}
 .chips{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
 .chip{padding:0 4px;white-space:nowrap;font-size:15px;min-height:42px}
 @media(max-width:380px){.chip{font-size:13.5px;border-width:1.5px}}
+.ctrls label:first-child{flex-direction:row;align-items:center;gap:10px}
+.ctrls label:first-child>span:first-child{display:inline;font-size:15px;font-weight:800;color:var(--soft);flex:none}
+.ctrls label:first-child select{flex:1}
+#t-menu::after{content:":"}
 </style>
 </head>
 <body>
@@ -449,7 +453,7 @@ function renderCocinar(){const t=tr();const i=st.cday,d=DAYS[i];const ch=chOf(i)
   ${ch===2?`<div class="box"><p>${t.glovoP}</p><div class="btns"><a class="btn linkbtn" href="https://glovoapp.com/">${t.glovoB}</a></div></div>`:`<p class="note" style="margin:0 0 12px">🏫 ${t.lunch}: ${lunchTxt(i)}</p>${st.p!==4?`<p class="note">${t.scaled} ${st.p}</p>`:''}${ds.map(k=>{const r=D[k];return `<div class="dish"><h4>${r[st.lang]}</h4><div class="meta"><span>⏱ ${r.m} ${t.min}</span><span>${t.tools}: ${r.t}</span></div><div class="cols"><div><h5>${t.ing}</h5><ul class="ing">${r.i.map(x=>`<li>${ingLine(x)}</li>`).join('')||'<li>1 taza de arroz (200 g)</li>'}</ul></div><div><h5>${t.steps}</h5><ol class="steps">${r.s.map(z=>`<li>${z}</li>`).join('')}</ol></div></div></div>`}).join('')}`}</div>`}
  $('v-cocinar').innerHTML=chips+wk+`<article class="card" style="--dc:var(${d.c})">${inner}</article>`}
 function view(){const h=location.hash.slice(1);const v=['semana','super','cocinar'].includes(h)?h:defView();['semana','super','cocinar'].forEach(x=>{$('v-'+x).hidden=x!==v;$('tab-'+x).setAttribute('aria-selected',x===v)})}
-function defView(){if(WEEKEND||!st.planned[DAYS[0].iso])return 'semana';return 'cocinar'}
+function defView(){return 'semana'}
 window.addEventListener('hashchange',()=>{if(location.hash==='#super'){st.planned[DAYS[0].iso]=true;save()}view();window.scrollTo(0,0)});
 function render(){renderTop();renderInst();renderSemana();renderSuper();renderCocinar();view();save()}
 function listText(){const t=tr();const tot=shopData();const lines=['🛒 '+t.list+' · Cena',''];['cong','verd','carne','lact','desp'].forEach(x=>{const ks=Object.keys(tot).filter(k=>C[k][2]===x);if(!ks.length)return;lines.push(SEC[x][st.lang]);ks.forEach(k=>{const c=C[k];lines.push('☐ '+nm(k)+' – '+qty(k,round(tot[k],c[3])))});lines.push('')});lines.push(t.pantry+PANTRY[st.lang]);return lines.join('\n')}
@@ -499,7 +503,7 @@ document.addEventListener('click',e=>{const el=e.target.closest('button');
  else if(el.id==='help-x'){$('help').close?$('help').close():$('help').removeAttribute('open')}
  else if(el.id==='inst-now'&&bip){bip.prompt();bip.userChoice.finally(()=>{bip=null;renderInst()})}});
 render();
-const APPV='2026-11-23-12';const LOADDAY=iso(new Date());
+const APPV='2026-11-23-13';const LOADDAY=iso(new Date());
 const checkUpdate=()=>{if(iso(new Date())!==LOADDAY){location.reload();return}try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.v&&j.v!==APPV)location.reload()}).catch(()=>{})}catch(e){}};
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
 window.addEventListener('pageshow',e=>{if(e.persisted)checkUpdate()});

@@ -2,7 +2,7 @@
   "name": "Cena · L'Olivera",
   "short_name": "Cena",
   "description": "Qué cenar hoy según lo que comieron en el cole. Recetas fáciles y lista del súper semanal.",
-  "start_url": "./#hoy",
+  "start_url": "./#semana",
   "scope": "./",
   "display": "standalone",
   "background_color": "#5f8f1e",
