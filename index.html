@@ -255,7 +255,6 @@ details.plat[open] summary{margin-bottom:8px;color:var(--ink)}
 .opts .dl .ico{width:24px;height:18px}
 .warn{background:color-mix(in srgb,var(--mar) 14%,var(--bg));color:color-mix(in srgb,var(--mar) 60%,var(--ink));border-radius:10px;padding:10px 12px;font-size:14px;font-weight:600;margin:0 0 10px}
 .nt{font-size:14px;color:var(--soft);background:var(--panel);border-radius:10px;padding:8px 12px;margin:0 0 10px}
-.ing li.pan{color:var(--soft)}
 .alg{font-size:13px;color:var(--soft);margin:8px 0 0}
 .src{font-size:13px;color:var(--soft);margin:12px 0 0}.src a{color:var(--olive);font-weight:700}
 </style>
@@ -608,7 +607,7 @@ function renderCocinar(){const t=tr();const i=st.cday,d=DAYS[i];const ch=chOf(i)
  if(!has(i))inner=`<div class="cardhead"><p>${d[st.lang]} ${d.d}</p><h2>${t.pendT}</h2></div><div class="cardbody"><p>${t.pendP}</p></div>`;
  else{const head=ch===2?t.glovoT:dn(ds);
   inner=`<div class="cardhead"><div class="row"><p>${d[st.lang]} ${d.d} · ${ch===2?t.c:ch===3?t.x:ch===1?t.b:t.a}</p><button class="chg" id="chg">${st.showChg?t.close:t.change}</button></div><h2>${head}</h2></div><div class="cardbody">${st.showChg?`<div class="opts" style="margin-bottom:16px">${optBtns(i,'opt')}</div>`:''}
-  ${ch===2?`<div class="box"><p>${t.glovoP}</p><div class="btns"><a class="btn linkbtn" href="https://glovoapp.com/">${t.glovoB}</a></div></div>`:`<p class="note" style="margin:0 0 12px">🏫 ${t.lunch}: ${lunchTxt(i)}</p>${st.p!==4?`<p class="note">${t.scaled} ${st.p}</p>`:''}${ds.map(k=>{const r=D[k];return `<div class="dish"><h4>${r[st.lang]}</h4><div class="meta"><span>⏱ ${r.m} ${t.min}</span><span>${t.tools}: ${r.t}</span></div>${warnHtml(k)}${r.nt?`<p class="nt">${r.nt}</p>`:''}<div class="cols"><div><h5>${t.ing}</h5><ul class="ing">${r.i.map(x=>`<li>${ingLine(x)}</li>`).join('')}${(r.p||[]).map(z=>`<li class="pan">${z}</li>`).join('')}</ul>${alLine(k)}</div><div><h5>${t.steps}</h5><ol class="steps">${r.s.map(z=>`<li>${z}</li>`).join('')}</ol></div></div><p class="src">${t.src} <a href="${r.src[1]}" target="_blank" rel="noopener">${r.src[0]}</a> · Recetas de Rechupete</p></div>`}).join('')}`}</div>`}
+  ${ch===2?`<div class="box"><p>${t.glovoP}</p><div class="btns"><a class="btn linkbtn" href="https://glovoapp.com/">${t.glovoB}</a></div></div>`:`<p class="note" style="margin:0 0 12px">🏫 ${t.lunch}: ${lunchTxt(i)}</p>${st.p!==4?`<p class="note">${t.scaled} ${st.p}</p>`:''}${ds.map(k=>{const r=D[k];return `<div class="dish"><h4>${r[st.lang]}</h4><div class="meta"><span>⏱ ${r.m} ${t.min}</span><span>${t.tools}: ${r.t}</span></div>${warnHtml(k)}<div class="cols"><div><h5>${t.ing}</h5><ul class="ing">${r.i.map(x=>`<li>${ingLine(x)}</li>`).join('')}${(r.p||[]).map(z=>`<li class="pan">${z}</li>`).join('')}</ul>${alLine(k)}</div><div><h5>${t.steps}</h5><ol class="steps">${r.s.map(z=>`<li>${z}</li>`).join('')}</ol></div></div></div>`}).join('')}`}</div>`}
  $('v-cocinar').innerHTML=chips+wk+`<article class="card" style="--dc:var(${d.c})">${inner}</article>`}
 function view(){const h=location.hash.slice(1);const v=['semana','super','cocinar'].includes(h)?h:defView();['semana','super','cocinar'].forEach(x=>{$('v-'+x).hidden=x!==v;$('tab-'+x).setAttribute('aria-selected',x===v)})}
 function defView(){return 'semana'}
@@ -661,7 +660,7 @@ document.addEventListener('click',e=>{const el=e.target.closest('button');
  else if(el.id==='help-x'){$('help').close?$('help').close():$('help').removeAttribute('open')}
  else if(el.id==='inst-now'&&bip){bip.prompt();bip.userChoice.finally(()=>{bip=null;renderInst()})}});
 render();
-const APPV='2026-11-23-18';const LOADDAY=iso(new Date());
+const APPV='2026-11-23-19';const LOADDAY=iso(new Date());
 const checkUpdate=()=>{if(iso(new Date())!==LOADDAY){location.reload();return}try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.v&&j.v!==APPV)location.reload()}).catch(()=>{})}catch(e){}};
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
 window.addEventListener('pageshow',e=>{if(e.persisted)checkUpdate()});
