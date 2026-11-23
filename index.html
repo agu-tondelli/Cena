@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cena</title>
+<meta name="theme-color" content="#5f8f1e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Cena">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&display=swap" rel="stylesheet">
+<style>
+/* VOICE everyday, warm, kitchen-practical for busy parents
+   IDEA the school's printed monthly menu: five coloured day cards, turned into tonight's recipe card
+   PICTURE the coloured week strip (L–V) as the main control, with tonight's card large below it
+   COLOUR white ground, olive green of L'Olivera as lead, the school's five day colours as accents
+   TYPE Nunito 900 display + Nunito Sans text
+   LAYOUT laptop: header row, week strip, then recipe (wide) beside the shopping list; phone: stacked */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#10140c);--ink:light-dark(#1d2416,#eef2e6);--soft:light-dark(#5b6650,#aab59c);--line:light-dark(#e3e8da,#2b3323);--panel:light-dark(#f5f8ef,#171d12);--olive:light-dark(#5f8f1e,#9ccc5a);--oliveDeep:light-dark(#3f6512,#c4e590);--lun:#4a86c8;--mar:#d2555e;--mie:#6f9e3a;--jue:#e98a2f;--vie:#7b5fb0}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 "Nunito Sans",system-ui,sans-serif;overflow-x:clip}
+.wrap{max-width:1240px;margin:0 auto;padding:0 max(4vw,16px)}
+header{background:var(--olive);color:#fff}
+:root[data-theme=dark] header{color:#10140c}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) header{color:#10140c}}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;padding:22px 0 14px}
+h1{font:900 clamp(40px,7vw,64px)/1 Nunito,sans-serif;letter-spacing:-.02em;margin:0}
+.sub{margin:4px 0 0;font-weight:600;opacity:.9}
+.ctrls{display:flex;flex-wrap:wrap;gap:10px}
+.ctrls label{display:flex;flex-direction:column;font-size:13px;font-weight:700;gap:3px}
+select,button{font:inherit;font-size:16px}
+select{min-height:44px;border-radius:10px;border:0;padding:0 10px;background:#fff;color:#1d2416;font-weight:600}
+.seg{display:inline-flex;background:rgba(255,255,255,.25);border-radius:10px;padding:3px}
+.seg button{min-height:38px;border:0;border-radius:8px;background:transparent;color:inherit;font-weight:800;padding:0 12px;cursor:pointer}
+.seg button[aria-pressed=true]{background:#fff;color:#1d2416}
+.week{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;padding:18px 0}
+.day{border:0;border-radius:14px;padding:10px 12px 12px;text-align:left;cursor:pointer;color:#fff;background:var(--c);min-height:96px;display:flex;flex-direction:column;gap:2px;transition:transform .15s}
+.day b{font:900 28px/1 Nunito,sans-serif}
+.day small{font-size:13px;font-weight:700;opacity:.92}
+.day span{font-size:13px;line-height:1.25;font-weight:600}
+.day[aria-pressed=false]{opacity:.9}
+.day[aria-pressed=true]{transform:translateY(-3px);box-shadow:0 0 0 3px #fff,0 8px 0 3px color-mix(in srgb,var(--c) 55%,#000)}
+.day:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--oliveDeep);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.day{transition:none}}
+main .grid{padding-top:26px;padding-bottom:40px}
+#today{max-width:900px}
+#superview{max-width:760px}
+.tabs{display:flex;gap:6px;padding-top:4px}
+.tabs a{flex:1 1 0;text-align:center;min-height:48px;display:flex;align-items:center;justify-content:center;gap:6px;border-radius:12px 12px 0 0;color:inherit;text-decoration:none;font-weight:800;font-size:17px;background:rgba(255,255,255,.18)}
+.tabs a[aria-selected=true]{background:var(--bg);color:var(--ink)}
+body.on-super .week{display:none}
+body.on-hoy .week{padding-top:14px}
+.gosuper{display:inline-flex;margin-top:18px;text-decoration:none;align-items:center}
+.card{border:2px solid var(--dc);border-radius:18px;overflow:hidden}
+.cardhead{background:var(--dc);color:#fff;padding:16px 18px}
+.cardhead h2{font:900 clamp(26px,4vw,36px)/1.05 Nunito,sans-serif;margin:0;letter-spacing:-.01em}
+.cardhead p{margin:6px 0 0;font-weight:600}
+.cardbody{padding:18px}
+.ctx{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin-bottom:16px}
+@media(max-width:600px){.ctx{grid-template-columns:minmax(0,1fr)}.week{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}.day{padding:8px;min-height:74px}.day span{display:none}.day b{font-size:22px}}
+.box{background:var(--panel);border-radius:12px;padding:12px 14px}
+.box h3{margin:0 0 4px;font-size:13px;color:var(--soft);font-weight:700}
+.box p{margin:0;font-weight:600}
+.ab{display:flex;gap:8px;margin:4px 0 16px;flex-wrap:wrap}
+.ab button{flex:1 1 180px;min-height:52px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);text-align:left;padding:8px 12px;cursor:pointer;font-weight:700}
+.ab button[aria-pressed=true]{border-color:var(--dc);background:color-mix(in srgb,var(--dc) 12%,var(--bg))}
+.ico{width:30px;height:22px;vertical-align:-5px}
+.mini .ico{width:24px;height:18px;vertical-align:-3px}
+.ab .cbtn{display:flex;flex-direction:column;justify-content:center}
+.ab button:disabled{opacity:.45;cursor:not-allowed}
+.ab small{display:block;font-weight:600;color:var(--soft);font-size:13px}
+.dish{border-top:1px solid var(--line);padding-top:14px;margin-top:14px}
+.dish:first-of-type{border-top:0;margin-top:0;padding-top:0}
+.dish h4{font:800 22px/1.15 Nunito,sans-serif;margin:0 0 4px}
+.meta{display:flex;flex-wrap:wrap;gap:6px 16px;color:var(--soft);font-size:14px;font-weight:600;margin-bottom:10px}
+.cols{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.3fr);gap:18px}
+@media(max-width:600px){.cols{grid-template-columns:minmax(0,1fr)}}
+.cols h5{margin:0 0 6px;font-size:14px;font-weight:800}
+ul.ing{margin:0;padding-left:18px}
+ul.ing li{margin-bottom:3px}
+ol.steps{margin:0;padding-left:22px}
+ol.steps li{margin-bottom:7px}
+.note{font-size:14px;color:var(--soft);margin:10px 0 0}
+.extra{display:inline-block;background:color-mix(in srgb,var(--jue) 18%,var(--bg));border-radius:6px;padding:1px 7px;font-size:13px;font-weight:700}
+aside h2{font:900 28px/1.05 Nunito,sans-serif;margin:0 0 4px}
+.weeklist{list-style:none;margin:12px 0 18px;padding:0;border-top:1px solid var(--line)}
+.weeklist li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--c)}
+.mini{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.mini button{min-width:40px;min-height:36px;border:0;background:var(--bg);color:var(--ink);font-weight:800;cursor:pointer}
+.mini button[aria-pressed=true]{background:var(--olive);color:#fff}
+.mini button:disabled{opacity:.4}
+.shop h3{font-size:14px;font-weight:800;margin:14px 0 4px;color:var(--oliveDeep)}
+.shop label{display:flex;gap:10px;align-items:flex-start;padding:6px 0;cursor:pointer;border-bottom:1px dashed var(--line)}
+.shop input{width:20px;height:20px;margin-top:2px;accent-color:var(--olive);flex:none}
+.shop .q{margin-left:auto;font-weight:700;white-space:nowrap;text-align:right}
+.shop .q small{display:block;font-weight:600;color:var(--soft);font-size:13px}
+.shop label.done span:first-of-type{text-decoration:line-through;color:var(--soft)}
+.pantry{font-size:14px;color:var(--soft);margin:12px 0 0}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.btn{min-height:44px;border-radius:10px;border:2px solid var(--olive);background:var(--olive);color:#fff;font-weight:800;padding:0 16px;cursor:pointer}
+.btn.big{width:100%;min-height:54px;font-size:18px;margin-bottom:6px}
+.shop .tip{display:block;font-size:13px;color:var(--soft);font-weight:600;margin-top:1px}
+.btn.ghost{background:transparent;color:var(--oliveDeep)}
+footer{background:var(--panel);border-top:1px solid var(--line);font-size:14px;color:var(--soft)}
+footer .wrap{padding-top:18px;padding-bottom:24px}
+footer p{margin:0 0 6px}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1>Cena</h1>
+        <p class="sub" id="t-sub">Qué cenar hoy, según lo que comieron en L'Olivera</p>
+      </div>
+      <div class="ctrls">
+        <label><span id="t-menu">Menú</span><select id="variant" aria-label="Menú"></select></label>
+        <label><span id="t-ppl">Personas</span><select id="people" aria-label="Personas"><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option></select></label>
+        <label><span id="t-lang">Idioma</span><span class="seg"><button id="l-es" aria-pressed="true">ES</button><button id="l-ca" aria-pressed="false">CA</button></span></label>
+      </div>
+    </div>
+    <nav class="week" id="week" aria-label="Semana"></nav>
+    <div class="tabs" role="tablist"><a href="#hoy" id="tab-hoy" role="tab">🍽 <span id="t-tabhoy">Cena de hoy</span></a><a href="#super" id="tab-super" role="tab">🛒 <span id="t-tabsuper">Súper</span></a></div>
+  </div>
+</header>
+<main>
+  <div class="wrap grid">
+    <section id="today" aria-live="polite"></section>
+    <aside id="superview" hidden>
+      <h2 id="t-shop">Súper de la semana</h2>
+      <p class="note" id="t-shopsub">Elegí A, B o delivery para cada día y después armá la lista.</p>
+      <ul class="weeklist" id="weeklist"></ul>
+      <button class="btn big" id="build">Armame la lista del súper</button>
+      <div id="listwrap" hidden>
+      <div class="shop" id="shop"></div>
+      <p class="pantry" id="pantry"></p>
+      <div class="btns"><button class="btn" id="copy">Copiar lista</button><button class="btn ghost" id="clear">Desmarcar todo</button></div>
+      <p class="note" id="copied" hidden></p>
+      </div>
+    </aside>
+  </div>
+</main>
+<footer>
+  <div class="wrap">
+    <p id="t-f1">Menú del comedor elaborado por Paidós para la Escola L'Olivera; las cenas A son las que sugiere el cole y las B, alternativas con casi los mismos ingredientes.</p>
+    <p id="t-f2">Las recetas son orientativas: adaptalas a las alergias e intolerancias de tus hijos y revisá siempre las etiquetas. Info de alérgenos del cole: www.paidos.cat</p>
+  </div>
+</footer>
+<script>
+{
+const ICO='<svg class="ico" viewBox="0 0 32 24" aria-hidden="true"><rect x="2" y="3" width="11" height="9" rx="2" fill="currentColor"/><path d="M6 14h13l3-7h4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="19" r="3.2" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="25" cy="19" r="3.2" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M20 14l3 5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';
+const WD=[{es:'Lunes',ca:'Dilluns',c:'--lun'},{es:'Martes',ca:'Dimarts',c:'--mar'},{es:'Miércoles',ca:'Dimecres',c:'--mie'},{es:'Jueves',ca:'Dijous',c:'--jue'},{es:'Viernes',ca:'Divendres',c:'--vie'}];
+const MON_ES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'],MON_CA=['gener','febrer','març','abril','maig','juny','juliol','agost','setembre','octubre','novembre','desembre'];
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const NOW=new Date();const WEEKEND=NOW.getDay()===0||NOW.getDay()===6;
+const MONDAY=(()=>{const d=new Date(NOW.getFullYear(),NOW.getMonth(),NOW.getDate());const w=d.getDay();d.setDate(d.getDate()+(w===0?1:w===6?2:1-w));return d})();
+const DAYS=WD.map((w,k)=>{const d=new Date(MONDAY);d.setDate(d.getDate()+k);return Object.assign({iso:iso(d),d:d.getDate(),m:d.getMonth()},w)});
+const T={
+ es:{sub:"Qué cenar hoy, según lo que comieron en L'Olivera",menu:'Menú',ppl:'Personas',lang:'Idioma',shop:'Súper de la semana',shopsub:'Elegí A, B o delivery para cada día y después armá la lista.',lunch:'Al mediodía en el cole',sug:'Cena que sugiere el cole',none:'El cole no sugiere cena para este menú. Te proponemos esta, suave y sencilla:',a:'A · La del cole',b:'B · Alternativa',same:'mismos ingredientes',plus:'+ ',min:'min',tools:'Utensilios',ing:'Ingredientes',steps:'Pasos',pantry:'Revisá si ya tenés: ',copy:'Copiar lista',clear:'Desmarcar todo',copied:'Lista copiada. Pegala en WhatsApp o en Notas.',nocopy:'No se pudo copiar: seleccioná la lista y copiala a mano.',f1:"Semana {r}. Menú del comedor elaborado por Paidós para la Escola L'Olivera; las cenas A son las que sugiere el cole y las B, alternativas con casi los mismos ingredientes.",f2:"Las recetas son orientativas: adaptalas a las alergias e intolerancias de tus hijos y revisá siempre las etiquetas. Info de alérgenos del cole: www.paidos.cat",scaled:'Cantidades para',noB:'sin alternativa',list:'Lista del súper',c:'Delivery',cs:'Se va todo a la mierda',glovoT:'Hoy no se cocina 🛵',glovoP:'¿La extraescolar terminó tarde o simplemente no da? Está permitido. Esta cena sale sola de la lista del súper.',glovoB:'Pedir en Glovo',use:'usás',build:'Armame la lista del súper',rebuild:'Lista armada ✓ (se actualiza si cambiás algo)',tabhoy:'Cena de hoy',tabsuper:'Súper',go:'Ir al súper de la semana →',pend:'Menú pendiente',pendT:'Menú todavía no publicado',pendP:'El cole todavía no publicó el menú de este día. Apenas salga, Cena se actualiza sola y este día entra en la lista del súper.',wkend:'Es finde: ya te mostramos la semana que viene.'},
+ ca:{sub:"Què sopar avui, segons el que han dinat a L'Olivera",menu:'Menú',ppl:'Persones',lang:'Idioma',shop:'Compra de la setmana',shopsub:'Tria A, B o a domicili per a cada dia i després fes la llista.',lunch:"Al migdia a l'escola",sug:"Sopar que proposa l'escola",none:"L'escola no proposa sopar per a aquest menú. Et proposem aquest, suau i senzill:",a:"A · El de l'escola",b:'B · Alternativa',same:'mateixos ingredients',plus:'+ ',min:'min',tools:'Estris',ing:'Ingredients',steps:'Passos (en castellà, de moment)',pantry:'Mira si ja tens: ',copy:'Copiar llista',clear:'Desmarcar-ho tot',copied:'Llista copiada. Enganxa-la al WhatsApp o a Notes.',nocopy:"No s'ha pogut copiar: selecciona la llista i copia-la a mà.",f1:"Setmana {r}. Menú del menjador elaborat per Paidós per a l'Escola L'Olivera; els sopars A són els que proposa l'escola i els B, alternatives amb gairebé els mateixos ingredients.",f2:"Les receptes són orientatives: adapta-les a les al·lèrgies i intoleràncies dels teus fills i revisa sempre les etiquetes. Info d'al·lèrgens de l'escola: www.paidos.cat",scaled:'Quantitats per a',noB:'sense alternativa',list:'Llista de la compra',c:'A domicili',cs:'Tot se’n va a la merda',glovoT:'Avui no es cuina 🛵',glovoP:'L’extraescolar ha acabat tard o simplement no hi ha ganes? Està permès. Aquest sopar surt sol de la llista de la compra.',glovoB:'Demanar a Glovo',use:'en fas servir',build:'Fes-me la llista de la compra',rebuild:'Llista feta ✓ (s’actualitza si canvies res)',tabhoy:'Sopar d’avui',tabsuper:'Compra',go:'Anar a la compra de la setmana →',pend:'Menú pendent',pendT:'Menú encara no publicat',pendP:'L’escola encara no ha publicat el menú d’aquest dia. Quan surti, Cena s’actualitza sola i aquest dia entra a la llista de la compra.',wkend:'És cap de setmana: ja et mostrem la setmana que ve.'}};
+const SEC={cong:{es:'Congelados',ca:'Congelats'},verd:{es:'Verdura y fruta',ca:'Verdura i fruita'},carne:{es:'Carne, pescado y tofu',ca:'Carn, peix i tofu'},lact:{es:'Lácteos, huevos y refrigerados',ca:'Làctics, ous i refrigerats'},desp:{es:'Despensa',ca:'Rebost'}};
+// catalog: name es/ca, section, unit, pack size, pack name es/ca
+const C={
+ cebolla:['cebolla congelada troceada','ceba congelada trossejada','cong','g',450,'bolsa','bossa'],
+ pimiento:['pimiento congelado en tiras','pebrot congelat a tires','cong','g',450,'bolsa','bossa'],
+ wok:['verduras congeladas para saltear','verdures congelades per saltejar','cong','g',600,'bolsa','bossa'],
+ merluza:['merluza en filetes (fresca o congelada)','lluç en filets (fresc o congelat)','carne','g',0],
+ calabacin:['calabacín','carbassó','verd','u',0],
+ berenjena:['berenjena','albergínia','verd','u',0],
+ zanahoria:['zanahoria','pastanaga','verd','u',0],
+ patata:['patatas','patates','verd','g',2000,'malla','malla'],
+ tomate:['tomates','tomàquets','verd','u',0],
+ champi:['champiñones laminados','xampinyons laminats','verd','g',250,'bandeja','safata'],
+ limon:['limón','llimona','verd','u',0],
+ ternera:['filetes de ternera','filets de vedella','carne','g',0],
+ pollo:['pechuga de pollo en filetes','pit de pollastre en filets','carne','g',500,'bandeja','safata'],
+ seitan:['seitán','seitan','carne','g',0],
+ tofu:['tofu firme','tofu ferm','carne','g',400,'bloque','bloc'],
+ hamb:['hamburguesas vegetales','hamburgueses vegetals','carne','u',0],
+ huevos:['huevos','ous','lact','u',12,'docena','dotzena'],
+ mozz:['mozzarella rallada','mozzarella ratllada','lact','g',200,'bolsa','bossa'],
+ mozzsl:['mozzarella rallada sin lactosa','mozzarella ratllada sense lactosa','lact','g',200,'bolsa','bossa'],
+ quesoveg:['queso vegano rallado','formatge vegà ratllat','lact','g',200,'bolsa','bossa'],
+ masa:['masa de pizza refrigerada','massa de pizza refrigerada','lact','u',0],
+ masasg:['masa de pizza sin gluten','massa de pizza sense gluten','lact','u',0],
+ lentejas:['lentejas cocidas','llenties cuites','desp','g',400,'bote','pot'],
+ pasta:['pasta corta','pasta curta','desp','g',500,'paquete','paquet'],
+ pastasg:['pasta corta sin gluten','pasta curta sense gluten','desp','g',500,'paquete','paquet'],
+ fideos:['fideos','fideus','desp','g',250,'paquete','paquet'],
+ fideossg:['fideos sin gluten','fideus sense gluten','desp','g',250,'paquete','paquet'],
+ caldo:['caldo de verduras o pollo','brou de verdures o pollastre','desp','ml',1000,'brik','brik'],
+ tomtrit:['tomate triturado','tomàquet triturat','desp','g',400,'bote','pot'],
+ aceitunas:['aceitunas sin hueso','olives sense os','desp','g',150,'bote','pot'],
+ garbanzo:['harina de garbanzo','farina de cigró','desp','g',500,'paquete','paquet']};
+const GPU={calabacin:300,berenjena:350,zanahoria:100,tomate:150,limon:130};
+const TIP={calabacin:['o una bolsa de verduras asadas congeladas y te olvidás de cortar','o una bossa de verdures rostides congelades i no has de tallar res'],berenjena:['o una bolsa de verduras asadas congeladas','o una bossa de verdures rostides congelades'],zanahoria:['rallada en bolsa: te ahorrás pelar','ratllada en bossa: t’estalvies pelar'],patata:['ya peladas y cortadas en bolsa (cuarta gama)','ja pelades i tallades en bossa'],tomate:['o tomates cherry: solo partir al medio','o tomàquets cherry: només partir-los'],limon:['o jugo de limón en botella','o suc de llimona en ampolla'],merluza:['congelada en filetes sin espinas: va directo al horno','congelat en filets sense espines: directe al forn']};
+const qty=(k,q)=>{const c=C[k];if(c[3]==='u'&&GPU[k])return fmt(Math.round(q*GPU[k]/10)*10,'g');return fmt(q,c[3])};
+const PANTRY={es:'aceite de oliva, sal, vinagre, orégano, pimentón, salsa de soja (tamari si es sin gluten), arroz',ca:"oli d'oliva, sal, vinagre, orenga, pebre vermell, salsa de soja (tamari si és sense gluten), arròs"};
+// substitutions by menu
+const SUB={gluten:{pasta:'pastasg',fideos:'fideossg',masa:'masasg'},lltraces:{pasta:'pastasg',fideos:'fideossg',masa:'masasg'},lactosa:{mozz:'mozzsl'},plv:{mozz:'quesoveg'},vega:{mozz:'quesoveg'}};
+// dishes: name es/ca, minutes, tools, ingredients [key, qty for 4, kitchen text with {n}], steps
+const D={
+ verdhorno:{es:'Verduras al horno',ca:'Verdures al forn',m:30,t:'Bandeja de horno con papel',i:[['calabacin',1,'1 {n} (300 g)'],['berenjena',1,'1 {n} (350 g)'],['pimiento',225,'media bolsa de {n} (225 g)'],['cebolla',150,'un tercio de bolsa de {n} (150 g)']],s:['Prendé el horno a 200 °C, calor arriba y abajo.','Cortá el calabacín y la berenjena en dados de unos 2 cm (como un dado de juego).','Poné en la bandeja los dados y las verduras congeladas, tal cual salen de la bolsa.','Echá 3 cucharadas de aceite (45 ml) y una pizca de sal, y mezclá con las manos.','Horneá 25 minutos. A los 12 minutos, dales vuelta con una cuchara.','Están listas cuando se pinchan fácil con un tenedor y tienen los bordes dorados.']},
+ crema:{es:'Crema de verduras asadas',ca:'Crema de verdures rostides',m:35,t:'Bandeja de horno, olla y batidora de mano',i:[['calabacin',1,'1 {n} (300 g)'],['berenjena',1,'1 {n} (350 g)'],['pimiento',225,'media bolsa de {n} (225 g)'],['cebolla',150,'un tercio de bolsa de {n} (150 g)'],['caldo',500,'medio brik de {n} (500 ml)']],s:['Prendé el horno a 200 °C, calor arriba y abajo.','Cortá el calabacín y la berenjena en dados de 2 cm y ponelos en la bandeja con las verduras congeladas.','Echá 3 cucharadas de aceite (45 ml) y sal, mezclá y horneá 25 minutos.','Pasá todas las verduras a una olla con el caldo. Fuego medio, 5 minutos.','Triturá con la batidora hasta que no queden trozos. Probá y agregá sal si hace falta.']},
+ lentejas:{es:'Salteado de lentejas',ca:'Saltat de llenties',m:12,t:'Colador y sartén grande',i:[['lentejas',800,'2 botes de {n} (800 g)'],['cebolla',150,'un tercio de bolsa de {n} (150 g)'],['tomtrit',200,'medio bote de {n} (200 g)']],s:['Pasá las lentejas a un colador y enjuagalas con agua del grifo.','Sartén a fuego medio con 2 cucharadas de aceite (30 ml). Echá la cebolla congelada y cociná 5 minutos, hasta que quede blandita.','Agregá el tomate y 1 cucharadita de pimentón dulce. Cociná 3 minutos.','Sumá las lentejas, mezclá y dejá 3 minutos más, hasta que estén bien calientes.']},
+ ternera:{es:'Filetes de ternera a la plancha',ca:'Filets de vedella a la planxa',m:10,t:'Sartén grande',i:[['ternera',600,'4 {n} finos (600 g)']],s:['Sacá la carne de la heladera 10 minutos antes.','Sartén a fuego fuerte con 1 cucharada de aceite (15 ml). Esperá 2 minutos a que esté bien caliente.','Poné los filetes sin amontonar y no los toques durante 2 minutos.','Dalos vuelta y cociná 2 minutos más. Salá al final.','Para los chicos, cortala en tiras finitas.']},
+ pastasalt:{es:'Pasta salteada con verduras',ca:'Pasta saltada amb verdures',m:20,t:'Olla grande y sartén grande',i:[['pasta',320,'dos tercios de paquete de {n} (320 g)'],['wok',450,'tres cuartos de bolsa de {n} (450 g)']],s:['Poné a hervir una olla grande con agua y una cucharada de sal, a fuego fuerte.','Cuando hierva, echá la pasta y cociná los minutos que diga el paquete.','Mientras, sartén a fuego medio con 2 cucharadas de aceite (30 ml). Echá las verduras congeladas tal cual y remové 8 minutos.','Colá la pasta, pasala a la sartén y mezclá 1 minuto.']},
+ pastahorno:{es:'Pasta al horno con tomate y verduras',ca:'Pasta al forn amb tomàquet i verdures',m:30,t:'Olla, sartén y fuente de horno',i:[['pasta',320,'dos tercios de paquete de {n} (320 g)'],['wok',450,'tres cuartos de bolsa de {n} (450 g)'],['tomtrit',400,'1 bote de {n} (400 g)'],['mozz',100,'media bolsa de {n} (100 g)']],s:['Prendé el horno a 200 °C, solo calor de arriba (gratinar).','Hervé la pasta 2 minutos menos de lo que dice el paquete y colala.','Mientras, sartén a fuego medio con 2 cucharadas de aceite: verduras congeladas 8 minutos, después el tomate 3 minutos más.','Mezclá pasta y salsa en la fuente y tirá el queso por arriba.','Al horno 10 minutos, hasta que el queso esté dorado.']},
+ huevo:{es:'Huevos revueltos',ca:'Ous remenats',m:6,t:'Bol y sartén antiadherente',i:[['huevos',6,'6 {n}']],s:['Batí los huevos en un bol con una pizca de sal.','Sartén a fuego bajo con 1 cucharada de aceite (15 ml).','Echá los huevos y mové con una espátula sin parar, unos 3 minutos.','Apagá cuando estén cremosos pero ya sin partes líquidas.']},
+ tofu:{es:'Tofu dorado',ca:'Tofu daurat',m:15,t:'Papel de cocina y sartén grande',i:[['tofu',400,'1 bloque de {n} (400 g)']],s:['Sacá el tofu del paquete y secalo apretándolo con papel de cocina.','Cortalo en dados de 2 cm.','Sartén a fuego medio-fuerte con 2 cucharadas de aceite (30 ml). Dorá los dados 8 minutos, dándolos vuelta.','Al final, 2 cucharadas de salsa de soja (30 ml) y 1 minuto más.']},
+ enspatata:{es:'Ensalada de patata',ca:'Amanida de patata',m:25,t:'Olla y bol grande',i:[['patata',800,'4 {n} medianas (800 g)'],['tomate',2,'2 {n} (300 g)'],['aceitunas',75,'medio bote de {n} (75 g)']],s:['Pelá las patatas y cortalas en dados de 2 cm.','Ponelas en una olla con agua fría y sal. Fuego fuerte; cuando hierva, contá 12 minutos.','Están listas cuando un tenedor entra fácil. Colalas y dejalas enfriar 5 minutos.','Mientras, cortá los tomates en dados.','Mezclá todo con las aceitunas, 3 cucharadas de aceite (45 ml), 1 de vinagre (15 ml) y sal.']},
+ patatashorno:{es:'Patatas al horno con hierbas',ca:'Patates al forn amb herbes',m:35,t:'Bandeja de horno con papel',i:[['patata',800,'4 {n} medianas (800 g)'],['cebolla',100,'un cuarto de bolsa de {n} (100 g)']],s:['Prendé el horno a 200 °C, calor arriba y abajo.','Lavá bien las patatas y cortalas en rodajas finas (medio centímetro), sin pelar.','En la bandeja: patatas y cebolla, 3 cucharadas de aceite (45 ml), sal y orégano. Mezclá con las manos.','Horneá 30 minutos, dándolas vuelta a los 15.','Si hay pescado, ponelo encima de las patatas los últimos 12 minutos.']},
+ merluza:{es:'Merluza al horno con limón',ca:'Lluç al forn amb llimona',m:15,t:'Bandeja de horno con papel',i:[['merluza',600,'4 {n} (600 g)'],['limon',1,'1 {n}']],s:['Horno a 200 °C (si ya está prendido, aprovechalo).','Poné los filetes en la bandeja, con la piel para abajo.','Un chorrito de aceite, sal y el jugo de medio limón por arriba.','Horneá 12 minutos (18 si la merluza está congelada; no hace falta descongelarla).','Está lista cuando se desarma con un tenedor y está blanca por dentro.']},
+ hamb:{es:'Hamburguesas vegetales a la plancha',ca:'Hamburgueses vegetals a la planxa',m:10,t:'Sartén',i:[['hamb',4,'4 {n}']],s:['Sartén a fuego medio con 1 cucharada de aceite (15 ml).','Cociná 4 o 5 minutos por lado (mirá también el paquete).']},
+ tortveg:{es:'Tortilla vegana de garbanzo',ca:'Truita vegana de cigró',m:22,t:'Bol, tenedor y sartén antiadherente de 24 cm con tapa',i:[['garbanzo',150,'un vaso de {n} (150 g)'],['cebolla',100,'un cuarto de bolsa de {n} (100 g)']],s:['En un bol, mezclá la harina con 300 ml de agua y una pizca de sal hasta que no queden grumos. Dejala 5 minutos.','Sartén a fuego medio con 1 cucharada de aceite: la cebolla congelada 5 minutos.','Echá la mezcla, bajá a fuego bajo y tapá. Cociná 8 minutos.','Dala vuelta con ayuda de un plato y cociná 4 minutos más.','Está lista cuando por dentro ya no está líquida.']},
+ sopa:{es:'Sopa de fideos',ca:'Sopa de fideus',m:15,t:'Olla',i:[['caldo',1000,'1 brik de {n} (1 L)'],['fideos',125,'medio paquete de {n} (125 g)'],['zanahoria',1,'1 {n} (100 g)']],s:['Poné el caldo en la olla a fuego fuerte.','Pelá la zanahoria, cortala en rodajas finitas y echala al caldo.','Cuando hierva, echá los fideos y bajá a fuego medio.','Cociná 5 minutos (o lo que diga el paquete) y servila.']},
+ wokfid:{es:'Fideos salteados tipo wok',ca:'Fideus saltats tipus wok',m:15,t:'Olla, colador y sartén grande',i:[['fideos',250,'1 paquete de {n} (250 g)'],['wok',300,'media bolsa de {n} (300 g)'],['zanahoria',1,'1 {n} rallada (100 g)']],s:['Hervé los fideos en agua con sal los minutos del paquete y colalos.','Sartén a fuego fuerte con 2 cucharadas de aceite (30 ml): verduras congeladas y zanahoria rallada, 6 minutos.','Sumá los fideos y 3 cucharadas de salsa de soja (45 ml). Mezclá 2 minutos.']},
+ pollo:{es:'Pollo a la plancha',ca:'Pollastre a la planxa',m:12,t:'Sartén grande',i:[['pollo',600,'4 filetes de {n} (600 g)']],s:['Sartén a fuego medio-fuerte con 1 cucharada de aceite (15 ml).','Cociná los filetes 4 minutos por lado.','Están listos cuando por dentro ya no están rosados: cortá uno para mirar.','Salá al final. Para los chicos, en tiras.']},
+ salteado:{es:'Salteado de verduras',ca:'Saltat de verdures',m:10,t:'Sartén grande',i:[['wok',450,'tres cuartos de bolsa de {n} (450 g)']],s:['Sartén a fuego medio-fuerte con 2 cucharadas de aceite (30 ml).','Echá las verduras congeladas tal cual y remové 8 a 10 minutos, hasta que estén tiernas.','Salá al final.']},
+ pizza:{es:'Pizza vegetal casera',ca:'Pizza vegetal casolana',m:25,t:'Bandeja de horno',i:[['masa',2,'2 {n}'],['tomtrit',200,'medio bote de {n} (200 g)'],['mozz',200,'1 bolsa de {n} (200 g)'],['pimiento',100,'un cuarto de bolsa de {n} (100 g)'],['champi',125,'media bandeja de {n} (125 g)']],s:['Prendé el horno a 220 °C, calor arriba y abajo.','Estirá las masas en la bandeja con su mismo papel.','Repartí el tomate con una cuchara, dejando 1 cm libre en el borde.','Poné el pimiento, los champiñones, el queso y un poco de orégano.','Horneá 12 a 15 minutos, hasta que el borde esté dorado y el queso derretido.']},
+ calzone:{es:'Calzone de verduras',ca:'Calzone de verdures',m:25,t:'Bandeja de horno y tenedor',i:[['masa',2,'2 {n}'],['tomtrit',200,'medio bote de {n} (200 g)'],['mozz',200,'1 bolsa de {n} (200 g)'],['pimiento',100,'un cuarto de bolsa de {n} (100 g)'],['champi',125,'media bandeja de {n} (125 g)']],s:['Prendé el horno a 220 °C, calor arriba y abajo.','Estirá cada masa. En una mitad poné tomate, pimiento, champiñones y queso.','Doblá la otra mitad por encima y cerrá el borde apretando con un tenedor.','Hacé 2 cortecitos arriba para que salga el vapor.','Horneá 15 minutos, hasta que esté bien dorado.']},
+ arrozsalt:{es:'Arroz salteado con verduras',ca:'Arròs saltat amb verdures',m:25,t:'Olla, colador y sartén grande',i:[['wok',450,'tres cuartos de bolsa de {n} (450 g)']],s:['Poné a hervir 1,5 L de agua con sal. Echá 1 taza de arroz (200 g) y cociná 16 minutos.','Colá el arroz.','Mientras, sartén a fuego fuerte con 2 cucharadas de aceite (30 ml): verduras congeladas 8 minutos, removiendo.','Sumá el arroz y 2 cucharadas de salsa de soja (30 ml). Mezclá 2 minutos.']},
+ bowl:{es:'Bowl de arroz y verduras',ca:'Bol d’arròs i verdures',m:25,t:'Olla, colador, sartén y 4 boles',i:[['wok',450,'tres cuartos de bolsa de {n} (450 g)']],s:['Hervé 1 taza de arroz (200 g) en 1,5 L de agua con sal, 16 minutos, y colalo.','Sartén a fuego medio-fuerte con 2 cucharadas de aceite: verduras congeladas 8 minutos.','Armá cada bol: arroz abajo, verduras a un costado y la proteína al otro.','Cada uno le pone salsa de soja a gusto. A los chicos les encanta armarlo solos.']},
+ seitan:{es:'Seitán a la plancha',ca:'Seitan a la planxa',m:10,t:'Sartén',i:[['seitan',400,'1 paquete de {n} (400 g)']],s:['Cortá el seitán en tiras finas.','Sartén a fuego medio-fuerte con 1 cucharada de aceite (15 ml).','Dorá las tiras 5 minutos, dándolas vuelta.','Al final, 1 cucharada de salsa de soja y 1 minuto más.']},
+ arroz:{es:'Arroz blanco',ca:'Arròs blanc',m:20,t:'Olla y colador',i:[],s:['Poné a hervir 1,5 L de agua con sal en una olla.','Echá 1 taza de arroz (200 g) y cociná 16 minutos a fuego medio.','Colalo y agregá un chorrito de aceite.']},
+ patataherv:{es:'Patata hervida',ca:'Patata bullida',m:25,t:'Olla',i:[['patata',800,'4 {n} medianas (800 g)']],s:['Pelá las patatas y cortalas en trozos grandes.','Olla con agua fría y sal; fuego fuerte y, cuando hierva, 15 minutos.','Están listas cuando un tenedor entra fácil. Aliñá con un chorrito de aceite.']}};
+// school dinner labels
+const L={arrozsalt:['Arròs saltejat amb verdures','Arroz salteado con verduras'],seitan:['Seità','Seitán'],verdhorno:['Verdures al forn','Verduras al horno'],lentejas:['Saltejat de llenties','Salteado de lentejas'],ternera:['Carn vermella','Carne roja'],pastasalt:['Pasta saltejada amb verdures','Pasta salteada con verduras'],huevo:['Ou','Huevo'],tofu:['Tofu','Tofu'],enspatata:['Amanida de patata','Ensalada de patata'],merluza:['Peix blanc','Pescado blanco'],hamb:['Hamburguesa vegetal','Hamburguesa vegetal'],tortveg:['Truita vegana','Tortilla vegana'],sopa:['Sopa amb pasta','Sopa con pasta'],pollo:['Carn blanca','Carne blanca'],salteado:['Saltejat de verdures','Salteado de verduras'],pizza:['Pizza vegetal casolana','Pizza vegetal casera']};
+const ALTD={verdhorno:'crema',pastasalt:'pastahorno',enspatata:'patatashorno',sopa:'wokfid',pizza:'calzone',arrozsalt:'bowl'};
+const GEN=[['verdhorno','lentejas'],['pastasalt','huevo'],['enspatata','merluza'],['sopa','pollo'],['salteado','pizza']];
+const LUNCH=[["Escudella barrejada · Lluç al forn · Enciam i olives verdes","Escudella · Merluza al horno · Lechuga y aceitunas"],["Arròs pilaff · Gall d'indi a l'orenga · Amanida d'enciam i pastanaga","Arroz pilaf · Pavo al orégano · Ensalada de lechuga y zanahoria"],["Puré de verdures · Espaguetis integrals amb bolonyesa vegetal · Formatge ratllat","Puré de verduras · Espaguetis integrales con boloñesa vegetal · Queso rallado"],["Llenties guisades amb hortalisses · Truita de patata, moniato i ceba · Amanida d'enciam i magrana","Lentejas guisadas · Tortilla de patata, boniato y cebolla · Ensalada de lechuga y granada"],["Bledes amb patata · Salsitxes de porc al forn · Xips de moniato","Acelgas con patata · Salchichas de cerdo al horno · Chips de boniato"]];
+const BASEW=['2026-11-23','2026-11-24','2026-11-25','2026-11-26','2026-11-27'];
+const MENU={};BASEW.forEach((k,j)=>{MENU[k]={l:LUNCH[j],d:GEN[j]}});
+MENU['2026-11-30']={l:["Mongeta tendra i patata · Filet de lluç a la romana · Amanida d'enciams i poma","Judías verdes con patata · Filete de merluza rebozado · Ensalada de lechuga y manzana"],d:['arrozsalt','pollo']};
+const V=[
+ ['general','General','General',{},{}],
+ ['colesterol','Colesterol','Colesterol',{2:["Puré de verdures · Espaguetis integrals amb bolonyesa vegetal (sense formatge)","Puré de verduras · Espaguetis integrales con boloñesa vegetal (sin queso)"],3:["Llenties guisades · Truita francesa · Amanida d'enciam i magrana","Lentejas guisadas · Tortilla francesa · Ensalada de lechuga y granada"],4:["Bledes amb patata · Llom a la planxa (sense xips)","Acelgas con patata · Lomo a la plancha (sin chips)"]},{}],
+ ['tova','Dieta tova','Dieta blanda',{0:["Sopa d'au amb pasta · Lluç al forn · Poma o plàtan","Sopa de ave con pasta · Merluza al horno · Manzana o plátano"],1:["Arròs blanc · Gall d'indi a la planxa · Poma o plàtan","Arroz blanco · Pavo a la plancha · Manzana o plátano"],2:["Pasta blanca · Vedella a la planxa · Poma o plàtan","Pasta blanca · Ternera a la plancha · Manzana o plátano"],3:["Puré de pastanaga · Truita francesa · Poma o plàtan","Puré de zanahoria · Tortilla francesa · Manzana o plátano"],4:["Patata bullida · Llom a la planxa · Poma o plàtan","Patata hervida · Lomo a la plancha · Manzana o plátano"]},{soft:[['arroz','pollo'],['sopa','merluza'],['patataherv','huevo'],['arroz','merluza'],['sopa','pollo']]}],
+ ['fsecs','Sense fruits secs','Sin frutos secos',{2:["Puré de verdures · Pasta amb bolonyesa de vedella · Formatge ratllat","Puré de verduras · Pasta con boloñesa de ternera · Queso rallado"]},{}],
+ ['gluten','Sense gluten','Sin gluten',{0:["Sopa d'au amb pasta sense gluten · Lluç al forn","Sopa de ave con pasta sin gluten · Merluza al horno"],2:["Puré de verdures · Pasta sense gluten amb bolonyesa de vedella","Puré de verduras · Pasta sin gluten con boloñesa de ternera"]},{sg:1}],
+ ['lactosa','Sense lactosa','Sin lactosa',{2:["Puré de verdures · Espaguetis amb bolonyesa vegetal · Formatge sense lactosa","Puré de verduras · Espaguetis con boloñesa vegetal · Queso sin lactosa"]},{}],
+ ['lltraces','Sense llegums (traces)','Sin legumbres (trazas)',{0:["Sopa d'au amb pasta sense al·lèrgens · Lluç al forn","Sopa de ave con pasta sin alérgenos · Merluza al horno"],2:["Puré de verdures · Pasta sense al·lèrgens amb bolonyesa de vedella","Puré de verduras · Pasta sin alérgenos con boloñesa de ternera"],3:["Patates amb hortalisses · Truita de patata, moniato i ceba","Patatas con hortalizas · Tortilla de patata, boniato y cebolla"]},{d:{0:['verdhorno','ternera']},sg:1}],
+ ['llegums','Sense llegums','Sin legumbres',{0:["Sopa d'au amb pasta · Lluç al forn","Sopa de ave con pasta · Merluza al horno"],2:["Puré de verdures · Pasta amb bolonyesa de vedella","Puré de verduras · Pasta con boloñesa de ternera"],3:["Patates amb hortalisses · Truita de patata, moniato i ceba","Patatas con hortalizas · Tortilla de patata, boniato y cebolla"]},{d:{0:['verdhorno','ternera']}}],
+ ['nocarn','Sense carn','Sin carne',{0:["Escudella vegetal · Lluç al forn","Escudella vegetal · Merluza al horno"],1:["Arròs pilaff · Tofu a l'orenga","Arroz pilaf · Tofu al orégano"],4:["Bledes amb patata · Hamburguesa vegetal","Acelgas con patata · Hamburguesa vegetal"]},{d:{3:['sopa','tofu']}}],
+ ['noporc','Sense porc','Sin cerdo',{4:["Bledes amb patata · Salsitxes de pollastre al forn","Acelgas con patata · Salchichas de pollo al horno"]},{}],
+ ['ou','Sense ou','Sin huevo',{3:["Llenties guisades · Pollastre a la planxa","Lentejas guisadas · Pollo a la plancha"]},{d:{1:['pastasalt','tofu']}}],
+ ['ovolacto','Ovolactovegetarià','Ovolactovegetariano',{0:["Escudella vegetal · Mongetes saltades","Escudella vegetal · Alubias salteadas"],1:["Arròs pilaff · Tofu a l'orenga","Arroz pilaf · Tofu al orégano"],4:["Bledes amb patata · Hamburguesa vegetal","Acelgas con patata · Hamburguesa vegetal"]},{d:{2:['enspatata','hamb'],3:['sopa','tofu']}}],
+ ['peix','Sense peix','Sin pescado',{0:["Escudella barrejada · Pollastre a la planxa","Escudella · Pollo a la plancha"]},{d:{2:['enspatata','ternera']}}],
+ ['plv','Sense proteïna de llet (PLV)','Sin proteína de leche (PLV)',{2:["Puré de verdures · Espaguetis amb bolonyesa vegetal (sense formatge)","Puré de verduras · Espaguetis con boloñesa vegetal (sin queso)"]},{}],
+ ['resmar','Sense res del mar','Sin pescado ni marisco',{0:["Escudella barrejada · Pollastre a la planxa","Escudella · Pollo a la plancha"]},{d:{2:['enspatata','ternera']}}],
+ ['vega','Vegà','Vegano',{0:["Escudella vegetal · Mongetes saltades","Escudella vegetal · Alubias salteadas"],1:["Arròs pilaff · Tofu a l'orenga","Arroz pilaf · Tofu al orégano"],2:["Puré de verdures · Espaguetis amb bolonyesa vegetal (sense formatge)","Puré de verduras · Espaguetis con boloñesa vegetal (sin queso)"],3:["Llenties guisades · Saltat de patata, moniato i ceba","Lentejas guisadas · Salteado de patata, boniato y cebolla"],4:["Bledes amb patata · Hamburguesa vegetal","Acelgas con patata · Hamburguesa vegetal"]},{d:{1:['pastasalt'],2:['enspatata','tortveg'],3:['sopa','tofu']}}]];
+V.forEach(x=>{const cv=o=>{if(!o)return o;const r={};Object.keys(o).forEach(k=>{r[/^\d$/.test(k)?BASEW[+k]:k]=o[k]});return r};x[3]=cv(x[3]);if(x[4].d)x[4].d=cv(x[4].d);if(x[4].soft)x[4].soft=cv(x[4].soft)});
+{const P={colesterol:["Mongeta tendra i patata · Lluç al forn","Judías verdes con patata · Merluza al horno"],gluten:["Mongeta tendra i patata · Lluç arrebossat sense gluten ni ou","Judías verdes con patata · Merluza rebozada sin gluten ni huevo"],lltraces:["Mongeta tendra i patata · Lluç arrebossat sense gluten ni ou","Judías verdes con patata · Merluza rebozada sin gluten ni huevo"],ou:["Mongeta tendra i patata · Lluç arrebossat sense ou","Judías verdes con patata · Merluza rebozada sin huevo"],ovolacto:["Mongeta tendra i patata · Cigrons saltats","Judías verdes con patata · Garbanzos salteados"],vega:["Mongeta tendra i patata · Cigrons saltats","Judías verdes con patata · Garbanzos salteados"],peix:["Mongeta tendra i patata · Pollastre a la planxa","Judías verdes con patata · Pollo a la plancha"],resmar:["Mongeta tendra i patata · Pollastre a la planxa","Judías verdes con patata · Pollo a la plancha"],tova:["Patata bullida · Lluç al forn · Poma o plàtan","Patata hervida · Merluza al horno · Manzana o plátano"]};
+ V.forEach(x=>{if(P[x[0]])x[3]['2026-11-30']=P[x[0]];if(['nocarn','ovolacto','vega'].includes(x[0])){x[4].d=x[4].d||{};x[4].d['2026-11-30']=['arrozsalt','seitan']}if(x[4].soft)x[4].soft['2026-11-30']=['arroz','pollo']})}
+/* === MENÚS NUEVOS: agregar acá cada semana/mes (no tocar lo de arriba) ===
+   menu:  { 'AAAA-MM-DD': { l:[comida en catalán, comida en castellano], d:[platos de la cena GENERAL, ids de D] } }
+   lunch: { idMenu: { 'AAAA-MM-DD': [catalán, castellano] } }   solo si la comida difiere del general
+   din:   { idMenu: { 'AAAA-MM-DD': [ids de D] } }               solo si la cena difiere del general (para 'tova' es la cena suave propuesta)
+   ids de menú: general colesterol tova fsecs gluten lactosa lltraces llegums nocarn noporc ou ovolacto peix plv resmar vega
+   Si una cena nueva necesita un plato que no existe en D, agregalo a D (y su etiqueta del cole a L, y si hace falta su alternativa en ALTD). */
+const EXTRA={menu:{},lunch:{},din:{}};
+Object.assign(MENU,EXTRA.menu);V.forEach(x=>{const lu=EXTRA.lunch[x[0]];if(lu)Object.assign(x[3],lu);const di=EXTRA.din[x[0]];if(di){if(x[4].soft)Object.assign(x[4].soft,di);else x[4].d=Object.assign(x[4].d||{},di)}});
+/* === fin menús nuevos === */
+let built=false;let st={v:'general',p:4,lang:'es',day:0,ch:{},done:{}};
+try{const s=JSON.parse(localStorage.getItem('cena_v1')||'null');if(s)st=Object.assign(st,s,{day:st.day})}catch(e){}
+const td=WEEKEND?0:DAYS.findIndex(x=>x.iso===iso(NOW));st.day=td>=0?td:0;if(Array.isArray(st.ch))st.ch={};
+const save=()=>{try{localStorage.setItem('cena_v1',JSON.stringify({v:st.v,p:st.p,lang:st.lang,ch:st.ch,done:st.done}))}catch(e){}};
+const $=id=>document.getElementById(id);
+const has=i=>!!MENU[DAYS[i].iso];
+const chOf=i=>{const c=st.ch[DAYS[i].iso]|0;return soft()&&c===1?0:c};
+const vr=()=>V.find(x=>x[0]===st.v)||V[0];
+const soft=()=>!!vr()[4].soft;
+const dinner=i=>{const k=DAYS[i].iso;if(!MENU[k])return [];const x=vr()[4];if(x.soft)return x.soft[k]||[];return (x.d&&x.d[k])||MENU[k].d};
+const dishesFor=(i,b)=>{if(b===2)return [];const a=dinner(i);if(!b||soft())return a;return a.map(k=>ALTD[k]||k)};
+const sub=k=>{const s=SUB[st.v];return s&&s[k]?s[k]:k};
+const nm=k=>C[k][st.lang==='es'?0:1];
+const fmt=(q,u)=>u==='u'?q+' u.':u==='ml'?(q>=1000?(Math.round(q/100)/10+' L').replace('.',','):q+' ml'):(q>=1000?(Math.round(q/100)/10+' kg').replace('.',','):q+' g');
+const round=(q,u)=>u==='u'?Math.ceil(q):Math.max(10,Math.round(q/10)*10);
+const extras=i=>{const a=new Set(dishesFor(i,0).flatMap(d=>D[d].i.map(x=>sub(x[0]))));const b=[...new Set(dishesFor(i,1).flatMap(d=>D[d].i.map(x=>sub(x[0]))))].filter(k=>!a.has(k));return b};
+function ingLine(x){const k=sub(x[0]);const f=st.p/4;if(st.v==='vega'&&x[0]==='mozz'&&false)return '';
+ if(f===1&&st.lang==='es')return x[2].replace('{n}',nm(k));
+ const c=C[k];const q=round(x[1]*f,c[3]);return nm(k).charAt(0).toUpperCase()+nm(k).slice(1)+': '+fmt(q,c[3])}
+function renderTop(){const t=T[st.lang];document.documentElement.lang=st.lang;
+ ['sub','menu','ppl','lang','shop','shopsub','f2','tabhoy','tabsuper'].forEach(k=>{$('t-'+k).textContent=t[k]});const MN=st.lang==='es'?MON_ES:MON_CA,a0=DAYS[0],a4=DAYS[4],de=st.lang==='es'?' de ':' de ';$('t-f1').textContent=t.f1.replace('{r}',(st.lang==='es'?'del ':'del ')+a0.d+(a0.m!==a4.m?de+MN[a0.m]:'')+(st.lang==='es'?' al ':' al ')+a4.d+de+MN[a4.m]);$('copy').textContent=t.copy;$('clear').textContent=t.clear;
+ $('variant').innerHTML=V.map(x=>`<option value="${x[0]}"${x[0]===st.v?' selected':''}>${st.lang==='es'?x[2]:x[1]}</option>`).join('');
+ $('people').value=String(st.p);$('l-es').setAttribute('aria-pressed',st.lang==='es');$('l-ca').setAttribute('aria-pressed',st.lang==='ca');
+ $('week').innerHTML=DAYS.map((d,i)=>{const ds=dishesFor(i,chOf(i));const nmd=!has(i)?t.pend:ds.length?ds.map(k=>D[k][st.lang]).join(' + '):'Delivery 🛵';return `<button class="day" style="--c:var(${d.c})" aria-pressed="${i===st.day}" data-i="${i}"><small>${d[st.lang]}</small><b>${d.d}</b><span>${nmd}</span></button>`}).join('')}
+function renderToday(){const t=T[st.lang];const i=st.day,d=DAYS[i];const wk=WEEKEND?`<p class="note" style="margin:0 0 12px">${t.wkend}</p>`:'';
+ if(!has(i)){$('today').innerHTML=`${wk}<article class="card" style="--dc:var(${d.c})"><div class="cardhead"><p>${d[st.lang]} ${d.d}</p><h2>${t.pendT}</h2></div><div class="cardbody"><p>${t.pendP}</p><a class="btn ghost gosuper" href="#super">${t.go}</a></div></article>`;return}
+ const lu=vr()[3][d.iso]||MENU[d.iso].l;const li=st.lang==='ca'?lu[0]:lu[1];
+ const a=dinner(i);const sg=vr()[4].sg;const school=soft()?`<p>${t.none}</p>`:`<p>${a.map(k=>L[k][st.lang==='ca'?0:1]+(sg&&['pastasalt','sopa','pizza'].includes(k)?(st.lang==='ca'?' sense gluten':' sin gluten'):'')).join(' + ')}</p>`;
+ const ex=extras(i);const exTxt=ex.length?ex.map(k=>t.plus+nm(k)).join(', '):t.same;
+ const ch=chOf(i);const b=ch===1;const ds=dishesFor(i,ch);
+ $('today').innerHTML=`${wk}<article class="card" style="--dc:var(${d.c})"><div class="cardhead"><p>${d[st.lang]} ${d.d}</p><h2>${ds.length?ds.map(k=>D[k][st.lang]).join(' + '):t.glovoT}</h2></div><div class="cardbody">
+ <div class="ctx"><div class="box"><h3>${t.lunch}</h3><p>${li}</p></div><div class="box"><h3>${t.sug}</h3>${school}</div></div>
+ <div class="ab"><button data-ab="0" aria-pressed="${ch===0}">${t.a}<small>${dishesFor(i,0).map(k=>D[k][st.lang]).join(' + ')}</small></button><button data-ab="1" aria-pressed="${b}"${soft()?' disabled':''}>${t.b}<small>${soft()?t.noB:dishesFor(i,1).map(k=>D[k][st.lang]).join(' + ')+' · '+(ex.length?'<span class="extra">'+exTxt+'</span>':exTxt)}</small></button>${true?`<button class="cbtn" data-ab="2" aria-pressed="${ch===2}" aria-label="${t.c}"><span>${ICO} ${t.c}</span><small>${t.cs}</small></button>`:''}</div>${ch===2?`<div class="box"><p>${t.glovoP}</p><div class="btns"><a class="btn" style="display:inline-flex;align-items:center;text-decoration:none" href="https://glovoapp.com/">${t.glovoB}</a></div></div>`:''}
+ ${st.p!==4?`<p class="note">${t.scaled} ${st.p}</p>`:''}
+ ${ds.map(k=>{const r=D[k];return `<div class="dish"><h4>${r[st.lang]}</h4><div class="meta"><span>⏱ ${r.m} ${t.min}</span><span>${t.tools}: ${r.t}</span></div><div class="cols"><div><h5>${t.ing}</h5><ul class="ing">${r.i.map(x=>`<li>${ingLine(x)}</li>`).join('')||'<li>1 taza de arroz (200 g)</li>'}</ul></div><div><h5>${t.steps}</h5><ol class="steps">${r.s.map(s=>`<li>${s}</li>`).join('')}</ol></div></div></div>`}).join('')}
+ <a class="btn ghost gosuper" href="#super">${t.go}</a></div></article>`}
+function shopData(){const tot={};DAYS.forEach((d,i)=>{dishesFor(i,chOf(i)).forEach(k=>D[k].i.forEach(x=>{const kk=sub(x[0]);tot[kk]=(tot[kk]||0)+x[1]*st.p/4}))});return tot}
+function renderShop(){const t=T[st.lang];
+ $('weeklist').innerHTML=DAYS.map((d,i)=>{const ch=chOf(i);const ds=dishesFor(i,ch);if(!has(i))return `<li style="--c:var(${d.c})"><span class="dot"></span><span><b>${d[st.lang].slice(0,3)} ${d.d}</b> · ${t.pend}</span><span></span></li>`;return `<li style="--c:var(${d.c})"><span class="dot"></span><span><b>${d[st.lang].slice(0,3)} ${d.d}</b> · ${ds.length?ds.map(k=>D[k][st.lang]).join(' + '):'Delivery 🛵'}</span><span class="mini"><button data-w="${i}" data-v="0" aria-pressed="${ch===0}">A</button><button data-w="${i}" data-v="1" aria-pressed="${ch===1}"${soft()?' disabled':''}>B</button>${true?`<button data-w="${i}" data-v="2" aria-pressed="${ch===2}" aria-label="Delivery">${ICO}</button>`:''}</span></li>`}).join('');
+ const tot=shopData();const secs={};Object.keys(tot).forEach(k=>{(secs[C[k][2]]=secs[C[k][2]]||[]).push(k)});
+ $('shop').innerHTML=['cong','verd','carne','lact','desp'].filter(s=>secs[s]).map(s=>`<h3>${SEC[s][st.lang]}</h3>`+secs[s].map(k=>{const c=C[k];const q=round(tot[k],c[3]);const pk=c[4]?Math.ceil(q/c[4]):0;const pn=pk?`${pk} ${st.lang==='es'?c[5]:(pk>1?(c[6].endsWith('a')?c[6].slice(0,-1)+'es':c[6]+'s'):c[6])}${pk>1?(st.lang==='es'?'s':''):''}`:'';const on=!!st.done[k];const tp=TIP[k]?TIP[k][st.lang==='es'?0:1]:'';return `<label class="${on?'done':''}"><input type="checkbox" data-k="${k}"${on?' checked':''}><span>${nm(k).charAt(0).toUpperCase()+nm(k).slice(1)}${tp?`<span class="tip">💡 ${tp}</span>`:''}</span><span class="q">${qty(k,q)}</span></label>`}).join('')).join('');
+ $('pantry').textContent=t.pantry+PANTRY[st.lang];$('listwrap').hidden=!built;$('build').textContent=built?t.rebuild:t.build;$('build').classList.toggle('ghost',built)}
+function view(){const v=location.hash==='#super'?'super':'hoy';document.body.className='on-'+v;$('today').hidden=v!=='hoy';$('superview').hidden=v!=='super';$('tab-hoy').setAttribute('aria-selected',v==='hoy');$('tab-super').setAttribute('aria-selected',v==='super')}
+window.addEventListener('hashchange',()=>{view();window.scrollTo(0,0)});
+function render(){renderTop();renderToday();renderShop();view();save()}
+function listText(){const t=T[st.lang];const tot=shopData();const lines=['🛒 '+t.list+' · Cena',''];['cong','verd','carne','lact','desp'].forEach(s=>{const ks=Object.keys(tot).filter(k=>C[k][2]===s);if(!ks.length)return;lines.push(SEC[s][st.lang]);ks.forEach(k=>{const c=C[k];const q=round(tot[k],c[3]);const pk=c[4]?Math.ceil(q/c[4]):0;const pn=pk?pk+' '+(st.lang==='es'?c[5]+(pk>1?'s':''):(pk>1?(c[6].endsWith('a')?c[6].slice(0,-1)+'es':c[6]+'s'):c[6]))+' ('+fmt(pk*c[4],c[3])+')':fmt(q,c[3]);lines.push('☐ '+nm(k)+' – '+qty(k,q))});lines.push('')});lines.push(t.pantry+PANTRY[st.lang]);return lines.join('\n')}
+document.addEventListener('click',e=>{const el=e.target.closest('button');if(!el)return;
+ if(el.dataset.i!==undefined){st.day=+el.dataset.i;render();return}
+ if(el.dataset.ab!==undefined){st.ch[DAYS[st.day].iso]=+el.dataset.ab;render();return}
+ if(el.dataset.w!==undefined){st.ch[DAYS[+el.dataset.w].iso]=+el.dataset.v;render();return}
+ if(el.id==='l-es'||el.id==='l-ca'){st.lang=el.id.slice(2);render();return}
+ if(el.id==='build'){built=true;render();$('listwrap').scrollIntoView({behavior:'smooth',block:'start'});return}
+ if(el.id==='clear'){st.done={};render();return}
+ if(el.id==='copy'){const m=$('copied');try{navigator.clipboard.writeText(listText()).then(()=>{m.textContent=T[st.lang].copied;m.hidden=false}).catch(()=>{m.textContent=T[st.lang].nocopy;m.hidden=false})}catch(err){m.textContent=T[st.lang].nocopy;m.hidden=false}}});
+document.addEventListener('change',e=>{const el=e.target;if(el.id==='variant'){st.v=el.value;render()}else if(el.id==='people'){st.p=+el.value;render()}else if(el.dataset.k){st.done[el.dataset.k]=el.checked;el.closest('label').classList.toggle('done',el.checked);save()}});
+render();
+}
+</script>
+</body>
+</html>
