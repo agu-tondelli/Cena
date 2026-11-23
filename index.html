@@ -2,10 +2,13 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Cena</title>
-<meta name="theme-color" content="#5f8f1e">
+<meta name="theme-color" content="#5f8f1e" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#2f4d12" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Cena">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -20,25 +23,24 @@
    COLOUR white ground, olive green of L'Olivera as lead, the school's five day colours as accents
    TYPE Nunito 900 display + Nunito Sans text
    LAYOUT laptop: header row, week strip, then recipe (wide) beside the shopping list; phone: stacked */
-:root{color-scheme:light dark;--bg:light-dark(#ffffff,#10140c);--ink:light-dark(#1d2416,#eef2e6);--soft:light-dark(#5b6650,#aab59c);--line:light-dark(#e3e8da,#2b3323);--panel:light-dark(#f5f8ef,#171d12);--olive:light-dark(#5f8f1e,#9ccc5a);--oliveDeep:light-dark(#3f6512,#c4e590);--lun:#4a86c8;--mar:#d2555e;--mie:#6f9e3a;--jue:#e98a2f;--vie:#7b5fb0}
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#10140c);--ink:light-dark(#1d2416,#eef2e6);--soft:light-dark(#5b6650,#aab59c);--line:light-dark(#e3e8da,#2b3323);--panel:light-dark(#f5f8ef,#171d12);--olive:light-dark(#5f8f1e,#9ccc5a);--hdr:light-dark(#5f8f1e,#2f4d12);--oliveDeep:light-dark(#3f6512,#c4e590);--lun:#4a86c8;--mar:#d2555e;--mie:#6f9e3a;--jue:#e98a2f;--vie:#7b5fb0}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
 html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:16px/1.55 "Nunito Sans",system-ui,sans-serif;overflow-x:clip}
 .wrap{max-width:1240px;margin:0 auto;padding:0 max(4vw,16px)}
-header{background:var(--olive);color:#fff}
-:root[data-theme=dark] header{color:#10140c}
-@media (prefers-color-scheme:dark){:root:not([data-theme=light]) header{color:#10140c}}
-.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;padding:22px 0 14px}
+header{background:var(--hdr);color:#fff;padding-top:env(safe-area-inset-top,0px)}
+.top{display:grid;grid-template-columns:minmax(0,1fr) auto auto;grid-template-areas:'brand ctrls lang';align-items:end;gap:12px 16px;padding:22px 0 14px}
+.brand{grid-area:brand}.ctrls{grid-area:ctrls}.langw{grid-area:lang}
 h1{font:900 clamp(40px,7vw,64px)/1 Nunito,sans-serif;letter-spacing:-.02em;margin:0}
 .sub{margin:4px 0 0;font-weight:600;opacity:.9}
 .ctrls{display:flex;flex-wrap:wrap;gap:10px}
 .ctrls label{display:flex;flex-direction:column;font-size:13px;font-weight:700;gap:3px}
 select,button{font:inherit;font-size:16px}
-select{min-height:44px;border-radius:10px;border:0;padding:0 10px;background:#fff;color:#1d2416;font-weight:600}
-.seg{display:inline-flex;background:rgba(255,255,255,.25);border-radius:10px;padding:3px}
-.seg button{min-height:38px;border:0;border-radius:8px;background:transparent;color:inherit;font-weight:800;padding:0 12px;cursor:pointer}
-.seg button[aria-pressed=true]{background:#fff;color:#1d2416}
+select{height:44px;border-radius:12px;border:0;padding:0 34px 0 12px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%233f6512' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 12px center;color:#1d2416;font-weight:700;-webkit-appearance:none;appearance:none}
+.seg{display:inline-flex;align-items:center;height:44px;background:rgba(255,255,255,.22);border-radius:12px;padding:3px}
+.seg button{height:38px;min-width:42px;border:0;border-radius:8px;background:transparent;color:inherit;font-weight:800;padding:0 12px;cursor:pointer}
+.seg button[aria-pressed=true]{background:#fff;color:#2f4d12}
 .week{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;padding:18px 0}
 .day{border:0;border-radius:14px;padding:10px 12px 12px;text-align:left;cursor:pointer;color:#fff;background:var(--c);min-height:96px;display:flex;flex-direction:column;gap:2px;transition:transform .15s}
 .day b{font:900 28px/1 Nunito,sans-serif}
@@ -124,7 +126,7 @@ aside h2{font:900 28px/1.05 Nunito,sans-serif;margin:0 0 4px}
 .pday .in{padding:12px 14px;display:grid;gap:10px}
 .pday .lun{font-size:14px;color:var(--soft)}
 .pday .lun b{color:var(--ink);font-weight:700}
-.opts{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:8px}
+.opts{display:grid;align-items:start;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:8px}
 @media(max-width:600px){.opts{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.opts .dl{grid-column:1/-1}}
 .opt{min-height:52px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);text-align:left;padding:8px 12px;cursor:pointer;font-weight:700;font-size:15px}
 .opt .hk{display:block;margin:5px 0;color:var(--ink);font-weight:600;font-size:13px;line-height:1.35}
@@ -141,7 +143,7 @@ aside h2{font:900 28px/1.05 Nunito,sans-serif;margin:0 0 4px}
 .chip[aria-pressed=true]{background:var(--c);color:#fff}
 .chg{background:none;border:0;color:#fff;text-decoration:underline;font-weight:700;cursor:pointer;font-size:15px;padding:4px 0}
 .cardhead .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
-@media(max-width:600px){h1{font-size:34px}.sub{display:none}.top{padding:14px 0 12px;gap:10px;flex-wrap:nowrap;align-items:center}.ctrls{flex-wrap:nowrap;gap:6px}.ctrls label>span:first-child{display:none}#variant{max-width:140px}#people{min-width:58px}.seg button{padding:0 8px}}
+@media(max-width:600px){.top{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:'brand lang' 'ctrls ctrls';align-items:center;padding:12px 0 14px;gap:10px}h1{font-size:36px}.sub{display:none}.ctrls{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}.ctrls label>span:first-child{display:none}.ctrls select{width:100%}.ppl{width:86px}}
 footer{background:var(--panel);border-top:1px solid var(--line);font-size:14px;color:var(--soft)}
 footer .wrap{padding-top:18px;padding-bottom:24px}
 footer p{margin:0 0 6px}
@@ -151,15 +153,15 @@ footer p{margin:0 0 6px}
 <header>
   <div class="wrap">
     <div class="top">
-      <div>
+      <div class="brand">
         <h1>Cena</h1>
         <p class="sub" id="t-sub">Qué cenar hoy, según lo que comieron en L'Olivera</p>
       </div>
       <div class="ctrls">
         <label><span id="t-menu">Menú</span><select id="variant" aria-label="Menú"></select></label>
-        <label><span id="t-ppl">Personas</span><select id="people" aria-label="Personas"><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option></select></label>
-        <label><span id="t-lang">Idioma</span><span class="seg"><button id="l-es" aria-pressed="true">ES</button><button id="l-ca" aria-pressed="false">CA</button></span></label>
+        <label><span id="t-ppl">Personas</span><select id="people" class="ppl" aria-label="Personas"><option value="2">👥 2</option><option value="3">👥 3</option><option value="4" selected>👥 4</option><option value="5">👥 5</option><option value="6">👥 6</option></select></label>
       </div>
+      <div class="langw"><span class="seg" role="group" aria-label="Idioma"><button id="l-es" aria-pressed="true">ES</button><button id="l-ca" aria-pressed="false">CA</button></span><span id="t-lang" hidden>Idioma</span></div>
     </div>
     <nav class="tabs" role="tablist" aria-label="Secciones">
       <a href="#semana" id="tab-semana" role="tab"><span class="ti">📅</span><span id="t-tabsem">Semana</span></a>
@@ -366,6 +368,11 @@ document.addEventListener('click',e=>{const el=e.target.closest('button');if(!el
  if(el.id==='copy'){const m=$('copied');try{navigator.clipboard.writeText(listText()).then(()=>{m.textContent=tr().copied;m.hidden=false}).catch(()=>{m.textContent=tr().nocopy;m.hidden=false})}catch(err){m.textContent=tr().nocopy;m.hidden=false}}});
 document.addEventListener('change',e=>{const el=e.target;if(el.id==='variant'){st.v=el.value;render()}else if(el.id==='people'){st.p=+el.value;render()}else if(el.dataset.k){st.done[el.dataset.k]=el.checked;el.closest('label').classList.toggle('done',el.checked);save()}});
 render();
+const APPV='2026-11-23-7';const LOADDAY=iso(new Date());
+const checkUpdate=()=>{if(iso(new Date())!==LOADDAY){location.reload();return}try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.v&&j.v!==APPV)location.reload()}).catch(()=>{})}catch(e){}};
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
+window.addEventListener('pageshow',e=>{if(e.persisted)checkUpdate()});
+checkUpdate();
 }
 </script>
 </body>
