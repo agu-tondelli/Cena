@@ -274,6 +274,11 @@ details.plat[open] summary{margin-bottom:8px;color:var(--ink)}
 .ctrls{grid-template-columns:minmax(0,1fr) auto auto!important;align-items:center}
 .ctrls .tmt{display:flex!important;flex-direction:row!important;align-items:center;justify-content:center;gap:8px;margin:0;height:46px;padding:0 14px;white-space:nowrap;font-size:15px;max-width:none}
 @media(max-width:600px){.ctrls .tmt{grid-column:1/-1}}
+.pday header .hr{display:flex;align-items:center;gap:8px}
+.tmh{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 10px 0 8px;border-radius:999px;background:rgba(255,255,255,.22);color:#fff;font:800 13.5px/1 Nunito,sans-serif;cursor:pointer;white-space:nowrap}
+.tmh input{width:16px;height:16px;margin:0;accent-color:#fff;flex:none}
+.tmh:has(input:checked){background:#fff;color:var(--c)}
+.tmh:has(input:checked) input{accent-color:var(--c)}
 </style>
 </head>
 <body>
@@ -612,7 +617,7 @@ function optBtns(i,cls){const t=tr();const ch=chOf(i);const L2=st.lang==='es'?0:
  h+=`<button class="${cls} dl" data-w="${i}" data-v="2" aria-pressed="${ch===2}" aria-label="${t.c}">${ICO}<span>${t.c}</span></button>`;
  return h}
 function renderSemana(){const t=tr();
- $('v-semana').innerHTML=`${WEEKEND?`<p class="note" style="margin:0 0 10px">${t.wkend}</p>`:''}<h2 class="vt">${t.semT}</h2><p class="note">${t.semSub}</p><ul class="plan">${DAYS.map((d,i)=>`<li class="pday" style="--c:var(${d.c})"><header><b>${d[st.lang]} <em>${d.d}</em></b><span class="pick">${has(i)?['A','B','🛵','C'][chOf(i)]:t.pend}</span></header><div class="in">${has(i)?`<div class="ctx2"><div><span class="lbl">${t.lunch}</span>${lunchTxt(i)}</div><div><span class="lbl">${t.sug}</span>${soft()?t.noneShort:schoolTxt(i)}</div></div><div class="opts">${optBtns(i,'opt')}</div>${tmTick(i)}`:`<p class="lun" style="margin:0">${t.pendP}</p>`}</div></li>`).join('')}</ul><a class="btn big linkbtn" style="justify-content:center" href="#super" id="gobuild">${t.build}</a>`}
+ $('v-semana').innerHTML=`${WEEKEND?`<p class="note" style="margin:0 0 10px">${t.wkend}</p>`:''}<h2 class="vt">${t.semT}</h2><p class="note">${t.semSub}</p><ul class="plan">${DAYS.map((d,i)=>`<li class="pday" style="--c:var(${d.c})"><header><b>${d[st.lang]} <em>${d.d}</em></b><span class="hr">${tmCan(i)?`<label class="tmh"><input type="checkbox" data-tmd="${i}"${tmDay(i)?' checked':''}><span>${TMT[st.lang].hd}</span></label>`:''}<span class="pick">${has(i)?['A','B','🛵','C'][chOf(i)]:t.pend}</span></span></header><div class="in">${has(i)?`<div class="ctx2"><div><span class="lbl">${t.lunch}</span>${lunchTxt(i)}</div><div><span class="lbl">${t.sug}</span>${soft()?t.noneShort:schoolTxt(i)}</div></div><div class="opts">${optBtns(i,'opt')}</div>${tmTick(i)}`:`<p class="lun" style="margin:0">${t.pendP}</p>`}</div></li>`).join('')}</ul><a class="btn big linkbtn" style="justify-content:center" href="#super" id="gobuild">${t.build}</a>`}
 /* === THERMOMIX (Cookidoo): nombre + ingredientes, los pasos quedan en Cookidoo === */
 Object.assign(C,{
  tm_quesocrema:['queso crema','formatge cremós','lact','g',200,'tarrina','terrina'],
@@ -677,7 +682,7 @@ const TMX={
  patataherv:{n:'Puré de patata',id:'r55095',sv:4,i:[['patata',1000],['leche',400],['mantequilla',30]]}
 };
 const tmOn=()=>!!st.tm&&st.v==='general';
-const tmDay=i=>tmOn();
+const tmDay=i=>tmOn()&&!!(st.tmd||{})[DAYS[i].iso];
 const tmCan=i=>tmOn()&&has(i)&&chOf(i)!==2&&dishesFor(i,chOf(i)).some(k=>TMX[k]);
 const tmOf=(k,i)=>tmDay(i)&&TMX[k]?TMX[k]:null;
 const tmTick=i=>false?`<label class="tmday"><input type="checkbox" data-tmd="${i}"${tmDay(i)?' checked':''}><span>${TMT[st.lang].day}</span></label>`:'';
@@ -690,8 +695,8 @@ function renderSuper(){const t=tr();$('supsub').textContent=t.supSub.replace('{n
  $('shop').innerHTML=['cong','verd','carne','lact','desp'].filter(x=>secs[x]).map(x=>`<h3>${SEC[x][st.lang]}</h3>`+secs[x].map(k=>{const c=C[k];const q=round(tot[k],c[3]);const on=!!st.done[k];const tp=TIP[k]?TIP[k][st.lang==='es'?0:1]:'';return `<label class="${on?'done':''}"><input type="checkbox" data-k="${k}"${on?' checked':''}><span>${nm(k).charAt(0).toUpperCase()+nm(k).slice(1)}${tp?`<span class="tip">💡 ${tp}</span>`:''}</span><span class="q">${qty(k,q)}</span></label>`}).join('')).join('')||`<p class="note">${t.empty}</p>`;
  $('pantry').textContent=t.pantry+PANTRY[st.lang]}
 
-const TMT={es:{tg:'🥣 Con Thermomix',day:'🥣 Este día, con Thermomix (receta de Cookidoo)',tag:'🥣 Va con Thermomix: la lista del súper es para la receta de Cookidoo.',only:' (solo menú General)',in:'En tu Thermomix: buscá',inC:'en Cookidoo.',open:'Abrir en Cookidoo',nt:'Ingredientes de esa receta para {p} (en Cookidoo viene para {s}). Los pasos te los da tu Thermomix.',pan:'+ lo básico de la despensa (aceite, sal, ajo…)',no:'Este plato no tiene versión Thermomix: va la receta de siempre.'},
- ca:{tg:'🥣 Amb Thermomix',day:'🥣 Aquest dia, amb Thermomix (recepta de Cookidoo)',tag:'🥣 Va amb Thermomix: la llista de la compra és per a la recepta de Cookidoo.',only:' (només menú General)',in:'A la teva Thermomix: busca',inC:'a Cookidoo.',open:'Obre a Cookidoo',nt:'Ingredients d’aquesta recepta per a {p} (a Cookidoo és per a {s}). Els passos te’ls dona la Thermomix.',pan:'+ el bàsic del rebost (oli, sal, all…)',no:'Aquest plat no té versió Thermomix: va la recepta de sempre.'}};
+const TMT={es:{tg:'🥣 Tengo Thermomix',hd:'Con Thermomix',day:'🥣 Este día, con Thermomix (receta de Cookidoo)',tag:'🥣 Va con Thermomix: la lista del súper es para la receta de Cookidoo.',only:' (solo menú General)',in:'En tu Thermomix: buscá',inC:'en Cookidoo.',open:'Abrir en Cookidoo',nt:'Ingredientes de esa receta para {p} (en Cookidoo viene para {s}). Los pasos te los da tu Thermomix.',pan:'+ lo básico de la despensa (aceite, sal, ajo…)',no:'Este plato no tiene versión Thermomix: va la receta de siempre.'},
+ ca:{tg:'🥣 Tinc Thermomix',hd:'Amb Thermomix',day:'🥣 Aquest dia, amb Thermomix (recepta de Cookidoo)',tag:'🥣 Va amb Thermomix: la llista de la compra és per a la recepta de Cookidoo.',only:' (només menú General)',in:'A la teva Thermomix: busca',inC:'a Cookidoo.',open:'Obre a Cookidoo',nt:'Ingredients d’aquesta recepta per a {p} (a Cookidoo és per a {s}). Els passos te’ls dona la Thermomix.',pan:'+ el bàsic del rebost (oli, sal, all…)',no:'Aquest plat no té versió Thermomix: va la recepta de sempre.'}};
 const tmQ=(k,q)=>{const u=C[k][3];if(u==='u'&&GPU[k])return Math.max(10,Math.round(q*GPU[k]/10)*10)+' g';if(u==='u'){const r=Math.max(0.5,Math.round(q*2)/2);const w=Math.floor(r);return (w?w:'')+(r%1?'½':'')}return Math.max(5,Math.round(q/5)*5)+' '+u};
 function tmDish(k,r,tx){const T=TMT[st.lang],t=tr();const cap=x=>x.charAt(0).toUpperCase()+x.slice(1);
  return `<div class="dish"><h4>${r[st.lang]}</h4><div class="tmbox"><p>🥣 ${T.in} <b>«${tx.n}»</b> ${T.inC}</p><a class="btn linkbtn" href="${tmURL(tx.id)}" target="_blank" rel="noopener">${T.open}</a></div><h5>${t.ing}</h5><p class="note" style="margin:0 0 8px">${T.nt.replace('{p}',st.p).replace('{s}',tx.sv)}</p><ul class="ing">${tx.i.map(x=>`<li>${cap(nm(x[0]))}: <b>${tmQ(x[0],x[1]*st.p/tx.sv)}</b></li>`).join('')}<li class="pan">${T.pan}</li></ul></div>`}
@@ -756,7 +761,7 @@ document.addEventListener('click',e=>{const el=e.target.closest('button');
  else if(el.id==='help-x'){$('help').close?$('help').close():$('help').removeAttribute('open')}
  else if(el.id==='inst-now'&&bip){bip.prompt();bip.userChoice.finally(()=>{bip=null;renderInst()})}});
 render();
-const APPV='2026-11-23-26';const LOADDAY=iso(new Date());
+const APPV='2026-11-23-27';const LOADDAY=iso(new Date());
 const checkUpdate=()=>{if(iso(new Date())!==LOADDAY){location.reload();return}try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.v&&j.v!==APPV)location.reload()}).catch(()=>{})}catch(e){}};
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
 window.addEventListener('pageshow',e=>{if(e.persisted)checkUpdate()});
