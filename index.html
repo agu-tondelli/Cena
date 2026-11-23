@@ -209,6 +209,31 @@ select{height:46px;background-color:var(--panel);color:var(--ink);border:1px sol
 .tabs a[aria-selected=true]{background:var(--hdr)}
 .brand{flex:1 1 auto;min-width:0}.brand>div{min-width:0}.langw{flex:none}
 @media(max-width:600px){.opts{grid-template-columns:minmax(0,1fr)}.opt{min-height:0}}
+
+/* ---- install help ---- */
+.inst{display:flex;align-items:center;gap:10px;margin-top:12px;padding:10px 8px 10px 14px;border-radius:14px;background:color-mix(in srgb,var(--olive) 12%,var(--bg));border:1px solid color-mix(in srgb,var(--olive) 35%,var(--line));font-weight:700;font-size:15px;line-height:1.3;max-width:560px}
+.inst[hidden]{display:none}
+.inst-ic{font-size:22px}
+#inst-t{flex:1}
+.inst-b{flex:none;min-height:36px;border:0;border-radius:10px;background:var(--hdr);color:#fff;font-weight:800;font-size:14px;padding:0 12px;cursor:pointer}
+.inst-x{flex:none;width:36px;height:36px;border:0;border-radius:10px;background:transparent;color:var(--soft);font-size:24px;line-height:1;cursor:pointer}
+.linklike{background:none;border:0;padding:0;color:var(--oliveDeep);font:inherit;font-weight:800;text-decoration:underline;cursor:pointer}
+dialog#help{width:min(520px,calc(100vw - 24px));max-height:calc(100dvh - 40px);border:0;border-radius:22px;padding:0;background:var(--bg);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog#help::backdrop{background:rgba(10,14,6,.55)}
+#help .hd{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:18px 18px 4px 22px}
+#help h2{font:900 24px/1.15 Nunito,sans-serif;margin:0;letter-spacing:-.01em}
+#help-b{padding:0 22px 22px}
+#help-b>p{color:var(--soft);margin:4px 0 14px}
+.plat{border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:10px;background:var(--panel)}
+.plat h3{margin:0 0 8px;font:800 17px/1.2 Nunito,sans-serif}
+.plat ol{margin:0;padding-left:22px}
+.plat li{margin-bottom:6px}
+.plat li b{white-space:nowrap}
+details.plat summary{cursor:pointer;font:800 15px/1.2 Nunito,sans-serif;color:var(--soft)}
+details.plat[open] summary{margin-bottom:8px;color:var(--ink)}
+.glyph{width:20px;height:20px;vertical-align:-4px;color:#2f7cf6}
+.urlbox{display:block;margin:6px 0 2px;padding:8px 10px;border-radius:10px;background:var(--panel);border:1px dashed var(--line);font-weight:700;word-break:break-all}
+#help .btn{width:100%;margin:4px 0 12px}
 </style>
 </head>
 <body>
@@ -225,6 +250,7 @@ select{height:46px;background-color:var(--panel);color:var(--ink);border:1px sol
         <label><span id="t-ppl">Personas</span><select id="people" class="ppl" aria-label="Personas"><option value="2">👥 2</option><option value="3">👥 3</option><option value="4" selected>👥 4</option><option value="5">👥 5</option><option value="6">👥 6</option></select></label>
       </div>
 </div>
+<div class="wrap"><div id="inst" class="inst" hidden><span class="inst-ic" aria-hidden="true">📲</span><span id="inst-t"></span><button id="inst-how" class="inst-b"></button><button id="inst-x" class="inst-x" aria-label="Cerrar">×</button></div></div>
 <div class="tabsbar"><div class="wrap">
   <nav class="tabs" role="tablist" aria-label="Secciones">
       <a href="#semana" id="tab-semana" role="tab"><span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg></span><span id="t-tabsem">Semana</span></a>
@@ -247,10 +273,12 @@ select{height:46px;background-color:var(--panel);color:var(--ink);border:1px sol
     <section id="v-cocinar" hidden></section>
   </div>
 </main>
+<dialog id="help" aria-labelledby="help-t"><div class="hd"><h2 id="help-t"></h2><button id="help-x" class="inst-x" aria-label="Cerrar">×</button></div><div id="help-b"></div></dialog>
 <footer>
   <div class="wrap">
     <p id="t-f1"></p>
     <p id="t-f2"></p>
+    <p><button id="inst-foot" class="linklike"></button></p>
   </div>
 </footer>
 <script>
@@ -420,7 +448,7 @@ function renderCocinar(){const t=tr();const i=st.cday,d=DAYS[i];const ch=chOf(i)
 function view(){const h=location.hash.slice(1);const v=['semana','super','cocinar'].includes(h)?h:defView();['semana','super','cocinar'].forEach(x=>{$('v-'+x).hidden=x!==v;$('tab-'+x).setAttribute('aria-selected',x===v)})}
 function defView(){if(WEEKEND||!st.planned[DAYS[0].iso])return 'semana';return 'cocinar'}
 window.addEventListener('hashchange',()=>{if(location.hash==='#super'){st.planned[DAYS[0].iso]=true;save()}view();window.scrollTo(0,0)});
-function render(){renderTop();renderSemana();renderSuper();renderCocinar();view();save()}
+function render(){renderTop();renderInst();renderSemana();renderSuper();renderCocinar();view();save()}
 function listText(){const t=tr();const tot=shopData();const lines=['🛒 '+t.list+' · Cena',''];['cong','verd','carne','lact','desp'].forEach(x=>{const ks=Object.keys(tot).filter(k=>C[k][2]===x);if(!ks.length)return;lines.push(SEC[x][st.lang]);ks.forEach(k=>{const c=C[k];lines.push('☐ '+nm(k)+' – '+qty(k,round(tot[k],c[3])))});lines.push('')});lines.push(t.pantry+PANTRY[st.lang]);return lines.join('\n')}
 document.addEventListener('click',e=>{const el=e.target.closest('button');if(!el)return;
  if(el.dataset.w!==undefined){st.ch[DAYS[+el.dataset.w].iso]=+el.dataset.v;if(el.closest('#v-cocinar'))st.showChg=false;render();return}
@@ -430,8 +458,45 @@ document.addEventListener('click',e=>{const el=e.target.closest('button');if(!el
  if(el.id==='clear'){st.done={};render();return}
  if(el.id==='copy'){const m=$('copied');try{navigator.clipboard.writeText(listText()).then(()=>{m.textContent=tr().copied;m.hidden=false}).catch(()=>{m.textContent=tr().nocopy;m.hidden=false})}catch(err){m.textContent=tr().nocopy;m.hidden=false}}});
 document.addEventListener('change',e=>{const el=e.target;if(el.id==='variant'){st.v=el.value;render()}else if(el.id==='people'){st.p=+el.value;render()}else if(el.dataset.k){st.done[el.dataset.k]=el.checked;el.closest('label').classList.toggle('done',el.checked);save()}});
+
+/* ---- install help ---- */
+const SITE='https://agu-tondelli.github.io/Cena/';
+const IH={es:{bar:'Tené Cena como app en tu móvil',how:'Cómo',foot:'📲 Cómo poner Cena en la pantalla de inicio',title:'Poné Cena en tu pantalla de inicio',intro:'Así la abrís con un toque, como cualquier app, y se actualiza sola. Lleva 20 segundos.',now:'Instalar ahora',
+ notsite:'Primero abrí la web de Cena en el navegador del móvil:',
+ ios:'iPhone (Safari)',ios1:'Abrí Cena en <b>Safari</b>.',ios2:'Tocá <b>Compartir</b> '+'SHARE'+' (abajo; si no lo ves, tocá <b>···</b> y después Compartir).',ios3:'Bajá y tocá <b>Añadir a pantalla de inicio</b>.',ios4:'Tocá <b>Añadir</b>. Listo, ya tenés el icono 🍃.',
+ and:'Android (Chrome)',and1:'Abrí Cena en <b>Chrome</b>.',and2:'Tocá los tres puntitos <b>⋮</b> arriba a la derecha.',and3:'Tocá <b>Añadir a pantalla de inicio</b> (o <b>Instalar aplicación</b>).',and4:'Confirmá con <b>Instalar</b>. Listo 🍃.',
+ other:'¿Tenés {x}?'},
+ ca:{bar:'Tingues Cena com a app al mòbil',how:'Com',foot:'📲 Com posar Cena a la pantalla d\'inici',title:'Posa Cena a la pantalla d\'inici',intro:'Així l\'obres amb un toc, com qualsevol app, i s\'actualitza sola. Són 20 segons.',now:'Instal·la ara',
+ notsite:'Primer obre la web de Cena al navegador del mòbil:',
+ ios:'iPhone (Safari)',ios1:'Obre Cena a <b>Safari</b>.',ios2:'Toca <b>Comparteix</b> '+'SHARE'+' (a baix; si no el veus, toca <b>···</b> i després Comparteix).',ios3:'Baixa i toca <b>Afegeix a la pantalla d\'inici</b>.',ios4:'Toca <b>Afegeix</b>. Fet, ja tens la icona 🍃.',
+ and:'Android (Chrome)',and1:'Obre Cena a <b>Chrome</b>.',and2:'Toca els tres puntets <b>⋮</b> a dalt a la dreta.',and3:'Toca <b>Afegeix a la pantalla d\'inici</b> (o <b>Instal·la l\'aplicació</b>).',and4:'Confirma amb <b>Instal·la</b>. Fet 🍃.',
+ other:'Tens {x}?'}};
+const SHAREG='<svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg>';
+let bip=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();bip=e;renderInst()});
+window.addEventListener('appinstalled',()=>{bip=null;try{localStorage.setItem('cena_inst','x')}catch(e){};renderInst()});
+const isStandalone=()=>{try{return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch(e){return false}};
+const isIOS=()=>/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const instOff=()=>{try{return localStorage.getItem('cena_inst')==='x'}catch(e){return false}};
+function helpHTML(){const h=IH[st.lang];const f=x=>h[x].replace('SHARE',SHAREG);
+ const ios=`<h3>${h.ios}</h3><ol><li>${h.ios1}</li><li>${f('ios2')}</li><li>${h.ios3}</li><li>${h.ios4}</li></ol>`;
+ const and=`<h3>${h.and}</h3><ol><li>${h.and1}</li><li>${h.and2}</li><li>${h.and3}</li><li>${h.and4}</li></ol>`;
+ const onSite=/github\.io$|^localhost$|^127\./.test(location.hostname);
+ const first=isIOS()?ios:and,second=isIOS()?and:ios,otherName=isIOS()?'Android':'iPhone';
+ return `<p>${h.intro}</p>${onSite?'':`<p style="color:var(--ink);margin-bottom:12px">${h.notsite}<a class="urlbox" href="${SITE}" target="_blank" rel="noopener">${SITE}</a></p>`}${bip?`<button class="btn big" id="inst-now">${h.now}</button>`:''}<div class="plat">${first}</div><details class="plat"><summary>${h.other.replace('{x}',otherName)}</summary>${second.replace(/<h3>.*?<\/h3>/,'')}</details>`}
+function renderInst(){const h=IH[st.lang];const b=$('inst');if(!b)return;
+ $('inst-t').textContent=h.bar;$('inst-how').textContent=h.how;$('inst-foot').textContent=h.foot;$('help-t').textContent=h.title;
+ b.hidden=isStandalone()||instOff();$('inst-foot').parentElement.hidden=isStandalone();
+ const d=$('help');if(d.open)$('help-b').innerHTML=helpHTML()}
+function openHelp(){$('help-b').innerHTML=helpHTML();const d=$('help');try{d.showModal()}catch(e){d.setAttribute('open','')}}
+document.addEventListener('click',e=>{const el=e.target.closest('button');
+ if(e.target.id==='help'){e.target.close();return}
+ if(!el)return;
+ if(el.id==='inst-how'||el.id==='inst-foot'){openHelp()}
+ else if(el.id==='inst-x'){try{localStorage.setItem('cena_inst','x')}catch(err){};$('inst').hidden=true}
+ else if(el.id==='help-x'){$('help').close?$('help').close():$('help').removeAttribute('open')}
+ else if(el.id==='inst-now'&&bip){bip.prompt();bip.userChoice.finally(()=>{bip=null;renderInst()})}});
 render();
-const APPV='2026-11-23-10';const LOADDAY=iso(new Date());
+const APPV='2026-11-23-11';const LOADDAY=iso(new Date());
 const checkUpdate=()=>{if(iso(new Date())!==LOADDAY){location.reload();return}try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.v&&j.v!==APPV)location.reload()}).catch(()=>{})}catch(e){}};
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
 window.addEventListener('pageshow',e=>{if(e.persisted)checkUpdate()});
