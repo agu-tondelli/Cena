@@ -258,6 +258,12 @@ details.plat[open] summary{margin-bottom:8px;color:var(--ink)}
 .alg{font-size:13px;color:var(--soft);margin:8px 0 0}
 .src{font-size:13px;color:var(--soft);margin:12px 0 0}.src a{color:var(--olive);font-weight:700}
 .fb{margin-top:10px;font-weight:600}.fb a{color:var(--oliveDeep);font-weight:800}
+.tmt{display:flex;align-items:center;gap:10px;margin-top:10px;max-width:560px;padding:10px 14px;border-radius:14px;border:1px solid var(--line);background:var(--panel);font-weight:700;font-size:15px;cursor:pointer}
+.tmt input{width:20px;height:20px;accent-color:var(--olive);flex:none}
+.tmt.off{opacity:.6;cursor:default}
+.tmbox{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin:6px 0 14px;padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--olive) 12%,var(--bg));border:1px solid color-mix(in srgb,var(--olive) 35%,var(--line))}
+.tmbox p{margin:0;font-weight:600;flex:1 1 220px}
+.tmbox .btn{min-height:40px;padding:0 14px;font-size:14px}
 </style>
 </head>
 <body>
@@ -273,6 +279,7 @@ details.plat[open] summary{margin-bottom:8px;color:var(--ink)}
         <label><span id="t-menu">Menú</span><select id="variant" aria-label="Menú"></select></label>
         <label><span id="t-ppl">Personas</span><select id="people" class="ppl" aria-label="Personas"><option value="2">👥 2</option><option value="3">👥 3</option><option value="4" selected>👥 4</option><option value="5">👥 5</option><option value="6">👥 6</option></select></label>
       </div>
+      <label class="tmt" id="tmw"><input type="checkbox" id="tm"><span id="t-tm"></span></label>
 </div>
 <div class="wrap"><div id="inst" class="inst" hidden><span class="inst-ic" aria-hidden="true">📲</span><span id="inst-t"></span><button id="inst-how" class="inst-b"></button><button id="inst-x" class="inst-x" aria-label="Cerrar">×</button></div></div>
 <div class="tabsbar"><div class="wrap">
@@ -553,7 +560,7 @@ Object.assign(MENU,EXTRA.menu);V.forEach(x=>{const lu=EXTRA.lunch[x[0]];if(lu)Ob
 let built=false;let st={v:'general',p:4,lang:'es',day:0,cday:0,ch:{},done:{},planned:{},showChg:false};
 try{const s=JSON.parse(localStorage.getItem('cena_v1')||'null');if(s)st=Object.assign(st,s,{day:st.day})}catch(e){}
 const td=WEEKEND?0:DAYS.findIndex(x=>x.iso===iso(NOW));st.day=td>=0?td:0;st.cday=st.day;st.planned=st.planned||{};if(Array.isArray(st.ch))st.ch={};
-const save=()=>{try{localStorage.setItem('cena_v1',JSON.stringify({v:st.v,p:st.p,lang:st.lang,ch:st.ch,done:st.done,planned:st.planned}))}catch(e){}};
+const save=()=>{try{localStorage.setItem('cena_v1',JSON.stringify({v:st.v,p:st.p,lang:st.lang,ch:st.ch,done:st.done,planned:st.planned,tm:!!st.tm}))}catch(e){}};
 const $=id=>document.getElementById(id);
 const has=i=>!!MENU[DAYS[i].iso];
 const chOf=i=>{let c=st.ch[DAYS[i].iso]|0;if(soft()&&(c===1||c===3))c=0;if(c===3&&has(i)&&!altC(i))c=0;return c};
@@ -596,12 +603,86 @@ function optBtns(i,cls){const t=tr();const ch=chOf(i);const L2=st.lang==='es'?0:
  return h}
 function renderSemana(){const t=tr();
  $('v-semana').innerHTML=`${WEEKEND?`<p class="note" style="margin:0 0 10px">${t.wkend}</p>`:''}<h2 class="vt">${t.semT}</h2><p class="note">${t.semSub}</p><ul class="plan">${DAYS.map((d,i)=>`<li class="pday" style="--c:var(${d.c})"><header><b>${d[st.lang]} <em>${d.d}</em></b><span class="pick">${has(i)?['A','B','🛵','C'][chOf(i)]:t.pend}</span></header><div class="in">${has(i)?`<div class="ctx2"><div><span class="lbl">${t.lunch}</span>${lunchTxt(i)}</div><div><span class="lbl">${t.sug}</span>${soft()?t.noneShort:schoolTxt(i)}</div></div><div class="opts">${optBtns(i,'opt')}</div>`:`<p class="lun" style="margin:0">${t.pendP}</p>`}</div></li>`).join('')}</ul><a class="btn big linkbtn" style="justify-content:center" href="#super" id="gobuild">${t.build}</a>`}
-function shopData(){const tot={};DAYS.forEach((d,i)=>{dishesFor(i,chOf(i)).forEach(k=>D[k].i.forEach(x=>{const kk=sub(x[0]);tot[kk]=(tot[kk]||0)+x[1]*st.p/4}))});return tot}
+/* === THERMOMIX (Cookidoo): nombre + ingredientes, los pasos quedan en Cookidoo === */
+Object.assign(C,{
+ tm_quesocrema:['queso crema','formatge cremós','lact','g',200,'tarrina','terrina'],
+ tm_pastcaldo:['pastillas de caldo','pastilles de brou','desp','u',0],
+ tm_aguacate:['aguacates','alvocats','verd','u',0],
+ tm_brotessoja:['brotes de soja frescos','brots de soja frescos','verd','g',0],
+ tm_alfalfa:['brotes de alfalfa','brots d’alfals','verd','g',0],
+ tm_cebroja:['cebolla roja','ceba vermella','verd','g',0],
+ tm_mostaza:['mostaza de Dijon','mostassa de Dijon','desp','g',0],
+ tm_cilantro:['cilantro fresco','coriandre fresc','verd','u',0],
+ tm_almendras:['almendras crudas peladas','ametlles crues pelades','desp','g',0],
+ tm_tomsecos:['tomates secos en aceite','tomàquets secs en oli','desp','g',0],
+ tm_albahaca:['albahaca fresca','alfàbrega fresca','verd','u',0],
+ tm_alcaparras:['alcaparras','tàperes','desp','g',0],
+ tm_cherry:['tomates cherry','tomàquets cherry','verd','g',0],
+ tm_canonigos:['canónigos','canonges','verd','g',0],
+ tm_pan:['rebanadas de pan para tostar','llesques de pa per torrar','desp','u',0],
+ tm_pepinillos:['pepinillos en vinagre','cogombrets en vinagre','desp','g',0],
+ tm_pimconserva:['pimiento rojo en conserva','pebrot vermell en conserva','desp','g',0],
+ tm_brocoli:['brócoli','bròquil','verd','g',0],
+ tm_garbsecos:['garbanzos secos','cigrons secs','desp','g',0],
+ tm_pipas:['pipas de girasol peladas','pipes de gira-sol pelades','desp','g',0],
+ tm_acsesamo:['aceite de sésamo tostado','oli de sèsam torrat','desp','ml',0],
+ tm_sojatext:['soja texturizada fina','soja texturitzada fina','desp','g',0],
+ tm_panrallado:['pan rallado','pa ratllat','desp','g',0],
+ tm_serrano:['jamón serrano en dados','pernil serrà a daus','carne','g',0],
+ tm_hierbabuena:['hierbabuena fresca','menta fresca','verd','u',0],
+ tm_picatostes:['picatostes','crostons','desp','g',0],
+ tm_lechecoco:['leche de coco','llet de coco','desp','ml',400,'lata','llauna'],
+ tm_sesamo:['semillas de sésamo','llavors de sèsam','desp','g',0],
+ tm_curry:['curry en polvo','curri en pols','desp','g',0],
+ tm_harina:['harina de trigo','farina de blat','desp','g',0],
+ tm_harinafuerza:['harina de fuerza','farina de força','desp','g',1000,'paquete','paquet'],
+ tm_harinainteg:['harina integral de trigo','farina integral de blat','desp','g',0],
+ tm_levadura:['levadura fresca de panadería','llevat fresc de forner','lact','g',25,'pastilla','pastilla'],
+ tm_gouda:['queso gouda','formatge gouda','lact','g',0],
+ tm_chorizo:['chorizo para guisar','xoriço per guisar','carne','g',0],
+ tm_menta:['menta fresca','menta fresca','verd','u',0],
+ tm_pavo:['pechuga de pavo en filetes','pit de gall dindi en filets','carne','g',0],
+ tm_jamondados:['jamón cocido en taco','pernil cuit en tac','carne','g',0],
+ tm_basmati:['arroz basmati','arròs basmati','desp','g',1000,'paquete','paquet']
+});
+const TMX={
+ crema:{n:'Crema de calabacín',id:'r55118',sv:4,i:[['calabacin',2.3],['cebollaf',0.35],['tm_pastcaldo',1],['mantequilla',10],['tm_quesocrema',40]]},
+ lentejas:{n:'Ensalada de lentejas con brotes y aguacate',id:'r279698',sv:4,i:[['lentejas',400],['tm_aguacate',1],['limon',0.25],['tm_brotessoja',100],['tm_alfalfa',50],['tm_cebroja',200],['tm_mostaza',20],['tm_cilantro',1]]},
+ pastasalt:{n:'Pasta integral con verduras y pesto de tomate',id:'r787946',sv:6,i:[['pasta',300],['parmesano',50],['tm_almendras',30],['tm_tomsecos',150],['tm_albahaca',1],['tm_alcaparras',10],['calabacin',0.7],['champi',300],['berenjena',0.65],['tm_cherry',100],['tm_canonigos',50],['feta',100]]},
+ huevo:{n:'Huevos revueltos',id:'r362120',sv:2,i:[['huevos',5],['mantequilla',20],['tm_pan',2]]},
+ enspatata:{n:'Ensalada campera',id:'r40206',sv:4,i:[['patata',600],['huevos',4],['perejil',1],['cebolleta',100],['pimverde',1],['pimrojo',0.5],['tomate',1.5],['aceitunas',50],['atun',160]]},
+ merluza:{n:'Lubina al vapor con brócoli y vinagreta de encurtidos',id:'r508026',sv:4,i:[['lubina',2],['tm_brocoli',600],['cebollaf',0.7],['aceitunas',50],['tm_pepinillos',50],['tm_pimconserva',60]]},
+ hamb:{n:'Hamburguesas vegetales de soja',id:'r40267',sv:6,i:[['tm_garbsecos',100],['zanahoria',1],['champi',200],['tm_pipas',50],['tm_acsesamo',50],['tm_sojatext',70],['huevos',2],['tm_panrallado',200]]},
+ tortveg:{n:'Tortilla de patata (sin huevo)',id:'r89559',sv:6,i:[['patata',550],['garbanzo',60],['harinamaiz',60],['cebollaf',1.35]]},
+ sopa:{n:'Sopa de picadillo con fideos',id:'r284379',sv:6,i:[['caldo',1200],['fideos',100],['pollo',200],['tm_serrano',100],['huevos',3],['tm_hierbabuena',1],['tm_picatostes',100]]},
+ wokfid:{n:'Fideos chinos con verduras al curry',id:'r124269',sv:4,i:[['fideoschinos',250],['pimrojo',0.5],['pimverde',0.55],['judiasv',100],['tm_curry',5],['tm_lechecoco',400],['tm_acsesamo',10],['lima',0.25],['tm_sesamo',20]]},
+ pollo:{n:'Muslos de pollo con salsa de ajillo',id:'r87148',sv:4,i:[['muslos',7],['tm_harina',30],['vino',150],['tm_pastcaldo',1],['limon',0.5],['perejil',0.5]]},
+ salteado:{n:'Verduras salteadas',id:'r557356',sv:2,i:[['pimrojo',0.5],['pimverde',0.55],['tm_cebroja',100],['zanahoria',1.5]]},
+ pizza:{n:'Pizza de verduras asadas',id:'r255584',sv:4,i:[['tm_harinafuerza',450],['tm_harinainteg',75],['tm_levadura',25],['berenjena',1],['tm_cebroja',300],['pimverde',1],['pimrojo',1],['tm_gouda',300],['tm_alcaparras',20]]},
+ calzone:{n:'Pizza caprichosa',id:'r51990',sv:4,i:[['tm_harinafuerza',400],['tm_levadura',20],['mozzb',250],['tomtrit',300],['alcachofa',8],['champi',50],['aceitunas',50],['anchoas',6]]},
+ arrozsalt:{n:'Arroz en su punto con verduras',id:'r806405',sv:4,i:[['cebollaf',1],['pimrojo',0.4],['pimverde',0.4],['champi',150],['calabacin',0.35],['judiasv',150],['vino',120],['tm_pastcaldo',1],['caldo',400]]},
+ garbanz:{n:'Guiso de garbanzos con verduras',id:'r29527',sv:6,i:[['garbcoc',800],['puerro',0.35],['zanahoria',1.5],['tm_chorizo',150],['caldo',750],['patata',200]]},
+ quesadilla:{n:'Quesadillas de pavo y aguacate',id:'r142170',sv:6,i:[['tortillas',6],['tm_pavo',500],['tm_aguacate',2],['lima',3],['limon',0.5],['jengibre',10],['tm_menta',1],['lechuga',0.25]]},
+ tresdel:{n:'Arroz tres delicias',id:'r18428',sv:6,i:[['tm_basmati',300],['tm_jamondados',125],['zanahoria',1.4],['huevos',3],['guisantes',100],['langostinos',100]]},
+ patataherv:{n:'Puré de patata',id:'r55095',sv:4,i:[['patata',1000],['leche',400],['mantequilla',30]]}
+};
+const tmOn=()=>!!st.tm&&st.v==='general';
+const tmOf=k=>tmOn()&&TMX[k]?TMX[k]:null;
+const tmURL=id=>'https://cookidoo.es/recipes/recipe/es-ES/'+id;
+
+function shopData(){const tot={};DAYS.forEach((d,i)=>{dishesFor(i,chOf(i)).forEach(k=>{const tx=tmOf(k);if(tx)tx.i.forEach(x=>{tot[x[0]]=(tot[x[0]]||0)+x[1]*st.p/tx.sv});else D[k].i.forEach(x=>{const kk=sub(x[0]);tot[kk]=(tot[kk]||0)+x[1]*st.p/4})})});return tot}
 function renderSuper(){const t=tr();$('supsub').textContent=t.supSub.replace('{n}',st.p);
  $('shopsum').innerHTML=DAYS.map((d,i)=>{const ds=dishesFor(i,chOf(i));return `<li style="--c:var(${d.c})"><span class="dot"></span><span><b>${d[st.lang].slice(0,3)} ${d.d}</b> · ${!has(i)?t.pend:ds.length?dn(ds):'Delivery 🛵'}</span></li>`}).join('');
  const tot=shopData();const secs={};Object.keys(tot).forEach(k=>{(secs[C[k][2]]=secs[C[k][2]]||[]).push(k)});
  $('shop').innerHTML=['cong','verd','carne','lact','desp'].filter(x=>secs[x]).map(x=>`<h3>${SEC[x][st.lang]}</h3>`+secs[x].map(k=>{const c=C[k];const q=round(tot[k],c[3]);const on=!!st.done[k];const tp=TIP[k]?TIP[k][st.lang==='es'?0:1]:'';return `<label class="${on?'done':''}"><input type="checkbox" data-k="${k}"${on?' checked':''}><span>${nm(k).charAt(0).toUpperCase()+nm(k).slice(1)}${tp?`<span class="tip">💡 ${tp}</span>`:''}</span><span class="q">${qty(k,q)}</span></label>`}).join('')).join('')||`<p class="note">${t.empty}</p>`;
  $('pantry').textContent=t.pantry+PANTRY[st.lang]}
+
+const TMT={es:{tg:'🥣 Tengo Thermomix: usar recetas de Cookidoo',only:' (solo con menú General)',in:'En tu Thermomix: buscá',inC:'en Cookidoo.',open:'Abrir en Cookidoo',nt:'Ingredientes de esa receta para {p} (en Cookidoo viene para {s}). Los pasos te los da tu Thermomix.',pan:'+ lo básico de la despensa (aceite, sal, ajo…)',no:'Este plato no tiene versión Thermomix: va la receta de siempre.'},
+ ca:{tg:'🥣 Tinc Thermomix: fer servir receptes de Cookidoo',only:' (només amb menú General)',in:'A la teva Thermomix: busca',inC:'a Cookidoo.',open:'Obre a Cookidoo',nt:'Ingredients d’aquesta recepta per a {p} (a Cookidoo és per a {s}). Els passos te’ls dona la Thermomix.',pan:'+ el bàsic del rebost (oli, sal, all…)',no:'Aquest plat no té versió Thermomix: va la recepta de sempre.'}};
+const tmQ=(k,q)=>{const u=C[k][3];if(u==='u'){const r=Math.max(0.5,Math.round(q*2)/2);const w=Math.floor(r);return (w?w:'')+(r%1?'½':'')}return Math.max(5,Math.round(q/5)*5)+' '+u};
+function tmDish(k,r,tx){const T=TMT[st.lang],t=tr();const cap=x=>x.charAt(0).toUpperCase()+x.slice(1);
+ return `<div class="dish"><h4>${r[st.lang]}</h4><div class="tmbox"><p>🥣 ${T.in} <b>«${tx.n}»</b> ${T.inC}</p><a class="btn linkbtn" href="${tmURL(tx.id)}" target="_blank" rel="noopener">${T.open}</a></div><h5>${t.ing}</h5><p class="note" style="margin:0 0 8px">${T.nt.replace('{p}',st.p).replace('{s}',tx.sv)}</p><ul class="ing">${tx.i.map(x=>`<li>${cap(nm(x[0]))}: <b>${tmQ(x[0],x[1]*st.p/tx.sv)}</b></li>`).join('')}<li class="pan">${T.pan}</li></ul></div>`}
+function renderTM(){const T=TMT[st.lang];const el=$('tm');if(!el)return;const g=st.v==='general';el.checked=!!st.tm&&g;el.disabled=!g;$('t-tm').textContent=T.tg+(g?'':T.only);$('tmw').classList.toggle('off',!g)}
 function renderCocinar(){const t=tr();const i=st.cday,d=DAYS[i];const ch=chOf(i);const ds=dishesFor(i,ch);
  const chips=`<div class="chips">${DAYS.map((x,j)=>`<button class="chip" style="--c:var(${x.c})" data-cd="${j}" aria-pressed="${j===i}">${x[st.lang].slice(0,3)} ${x.d}</button>`).join('')}</div>`;
  const wk=WEEKEND&&i===0?`<p class="note" style="margin:0 0 10px">${t.wkend2}</p>`:'';
@@ -609,12 +690,12 @@ function renderCocinar(){const t=tr();const i=st.cday,d=DAYS[i];const ch=chOf(i)
  if(!has(i))inner=`<div class="cardhead"><p>${d[st.lang]} ${d.d}</p><h2>${t.pendT}</h2></div><div class="cardbody"><p>${t.pendP}</p></div>`;
  else{const head=ch===2?t.glovoT:dn(ds);
   inner=`<div class="cardhead"><div class="row"><p>${d[st.lang]} ${d.d} · ${ch===2?t.c:ch===3?t.x:ch===1?t.b:t.a}</p><button class="chg" id="chg">${st.showChg?t.close:t.change}</button></div><h2>${head}</h2></div><div class="cardbody">${st.showChg?`<div class="opts" style="margin-bottom:16px">${optBtns(i,'opt')}</div>`:''}
-  ${ch===2?`<div class="box"><p>${t.glovoP}</p><div class="btns"><a class="btn linkbtn" href="https://glovoapp.com/">${t.glovoB}</a></div></div>`:`<p class="note" style="margin:0 0 12px">🏫 ${t.lunch}: ${lunchTxt(i)}</p>${st.p!==4?`<p class="note">${t.scaled} ${st.p}</p>`:''}${ds.map(k=>{const r=D[k];return `<div class="dish"><h4>${r[st.lang]}</h4><div class="meta"><span>⏱ ${r.m} ${t.min}</span><span>${t.tools}: ${r.t}</span></div>${warnHtml(k)}<div class="cols"><div><h5>${t.ing}</h5><ul class="ing">${r.i.map(x=>`<li>${ingLine(x)}</li>`).join('')}${(r.p||[]).map(z=>`<li class="pan">${z}</li>`).join('')}</ul>${alLine(k)}</div><div><h5>${t.steps}</h5><ol class="steps">${r.s.map(z=>`<li>${z}</li>`).join('')}</ol></div></div></div>`}).join('')}`}</div>`}
+  ${ch===2?`<div class="box"><p>${t.glovoP}</p><div class="btns"><a class="btn linkbtn" href="https://glovoapp.com/">${t.glovoB}</a></div></div>`:`<p class="note" style="margin:0 0 12px">🏫 ${t.lunch}: ${lunchTxt(i)}</p>${st.p!==4?`<p class="note">${t.scaled} ${st.p}</p>`:''}${ds.map(k=>{const r=D[k];const tx=tmOf(k);if(tx)return tmDish(k,r,tx);return `<div class="dish"><h4>${r[st.lang]}</h4><div class="meta"><span>⏱ ${r.m} ${t.min}</span><span>${t.tools}: ${r.t}</span></div>${warnHtml(k)}<div class="cols"><div><h5>${t.ing}</h5><ul class="ing">${r.i.map(x=>`<li>${ingLine(x)}</li>`).join('')}${(r.p||[]).map(z=>`<li class="pan">${z}</li>`).join('')}</ul>${alLine(k)}</div><div><h5>${t.steps}</h5><ol class="steps">${r.s.map(z=>`<li>${z}</li>`).join('')}</ol></div></div></div>`}).join('')}`}</div>`}
  $('v-cocinar').innerHTML=chips+wk+`<article class="card" style="--dc:var(${d.c})">${inner}</article>`}
 function view(){const h=location.hash.slice(1);const v=['semana','super','cocinar'].includes(h)?h:defView();['semana','super','cocinar'].forEach(x=>{$('v-'+x).hidden=x!==v;$('tab-'+x).setAttribute('aria-selected',x===v)})}
 function defView(){return 'semana'}
 window.addEventListener('hashchange',()=>{if(location.hash==='#super'){st.planned[DAYS[0].iso]=true;save()}view();window.scrollTo(0,0)});
-function render(){renderTop();renderInst();renderSemana();renderSuper();renderCocinar();view();save()}
+function render(){renderTop();renderTM();renderInst();renderSemana();renderSuper();renderCocinar();view();save()}
 function listText(){const t=tr();const tot=shopData();const lines=['🛒 '+t.list+' · Cena',''];['cong','verd','carne','lact','desp'].forEach(x=>{const ks=Object.keys(tot).filter(k=>C[k][2]===x);if(!ks.length)return;lines.push(SEC[x][st.lang]);ks.forEach(k=>{const c=C[k];lines.push('☐ '+nm(k)+' – '+qty(k,round(tot[k],c[3])))});lines.push('')});lines.push(t.pantry+PANTRY[st.lang]);return lines.join('\n')}
 document.addEventListener('click',e=>{const el=e.target.closest('button');if(!el)return;
  if(el.dataset.w!==undefined){st.ch[DAYS[+el.dataset.w].iso]=+el.dataset.v;if(el.closest('#v-cocinar'))st.showChg=false;render();return}
@@ -623,7 +704,7 @@ document.addEventListener('click',e=>{const el=e.target.closest('button');if(!el
  if(el.id==='l-es'||el.id==='l-ca'){st.lang=el.id.slice(2);render();return}
  if(el.id==='clear'){st.done={};render();return}
  if(el.id==='copy'){const m=$('copied');try{navigator.clipboard.writeText(listText()).then(()=>{m.textContent=tr().copied;m.hidden=false}).catch(()=>{m.textContent=tr().nocopy;m.hidden=false})}catch(err){m.textContent=tr().nocopy;m.hidden=false}}});
-document.addEventListener('change',e=>{const el=e.target;if(el.id==='variant'){st.v=el.value;render()}else if(el.id==='people'){st.p=+el.value;render()}else if(el.dataset.k){st.done[el.dataset.k]=el.checked;el.closest('label').classList.toggle('done',el.checked);save()}});
+document.addEventListener('change',e=>{const el=e.target;if(el.id==='variant'){st.v=el.value;render()}else if(el.id==='people'){st.p=+el.value;render()}else if(el.id==='tm'){st.tm=el.checked;save();render()}else if(el.dataset.k){st.done[el.dataset.k]=el.checked;el.closest('label').classList.toggle('done',el.checked);save()}});
 
 /* ---- install help ---- */
 const SITE='https://agu-tondelli.github.io/Cena/';
@@ -662,7 +743,7 @@ document.addEventListener('click',e=>{const el=e.target.closest('button');
  else if(el.id==='help-x'){$('help').close?$('help').close():$('help').removeAttribute('open')}
  else if(el.id==='inst-now'&&bip){bip.prompt();bip.userChoice.finally(()=>{bip=null;renderInst()})}});
 render();
-const APPV='2026-11-23-21';const LOADDAY=iso(new Date());
+const APPV='2026-11-23-22';const LOADDAY=iso(new Date());
 const checkUpdate=()=>{if(iso(new Date())!==LOADDAY){location.reload();return}try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.v&&j.v!==APPV)location.reload()}).catch(()=>{})}catch(e){}};
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
 window.addEventListener('pageshow',e=>{if(e.persisted)checkUpdate()});
