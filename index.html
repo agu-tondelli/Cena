@@ -257,6 +257,7 @@ details.plat[open] summary{margin-bottom:8px;color:var(--ink)}
 .nt{font-size:14px;color:var(--soft);background:var(--panel);border-radius:10px;padding:8px 12px;margin:0 0 10px}
 .alg{font-size:13px;color:var(--soft);margin:8px 0 0}
 .src{font-size:13px;color:var(--soft);margin:12px 0 0}.src a{color:var(--olive);font-weight:700}
+.fb{margin-top:10px;font-weight:600}.fb a{color:var(--oliveDeep);font-weight:800}
 </style>
 </head>
 <body>
@@ -302,6 +303,7 @@ details.plat[open] summary{margin-bottom:8px;color:var(--ink)}
     <p id="t-f1"></p>
     <p id="t-f2"></p>
     <p><button id="inst-foot" class="linklike"></button></p>
+    <p class="fb" id="t-fb"></p>
   </div>
 </footer>
 <script>
@@ -625,12 +627,12 @@ document.addEventListener('change',e=>{const el=e.target;if(el.id==='variant'){s
 
 /* ---- install help ---- */
 const SITE='https://agu-tondelli.github.io/Cena/';
-const IH={es:{bar:'Tené Cena como app en tu móvil',how:'Cómo',foot:'📲 Cómo poner Cena en la pantalla de inicio',title:'Poné Cena en tu pantalla de inicio',intro:'Así la abrís con un toque, como cualquier app, y se actualiza sola. Lleva 20 segundos.',now:'Instalar ahora',
+const IH={es:{fb:'💌 ¿Tenés alguna recomendación? Mandame un mail a <a href="mailto:agutondelli@gmail.com?subject=Cena">agutondelli@gmail.com</a> (aunque dudo que responda rápido 😅)',bar:'Tené Cena como app en tu móvil',how:'Cómo',foot:'📲 Cómo poner Cena en la pantalla de inicio',title:'Poné Cena en tu pantalla de inicio',intro:'Así la abrís con un toque, como cualquier app, y se actualiza sola. Lleva 20 segundos.',now:'Instalar ahora',
  notsite:'Primero abrí la web de Cena en el navegador del móvil:',
  ios:'iPhone (Safari)',ios1:'Abrí Cena en <b>Safari</b>.',ios2:'Tocá <b>Compartir</b> '+'SHARE'+' (abajo; si no lo ves, tocá <b>···</b> y después Compartir).',ios3:'Bajá y tocá <b>Añadir a pantalla de inicio</b>.',ios4:'Tocá <b>Añadir</b>. Listo, ya tenés el icono 🍃.',
  and:'Android (Chrome)',and1:'Abrí Cena en <b>Chrome</b>.',and2:'Tocá los tres puntitos <b>⋮</b> arriba a la derecha.',and3:'Tocá <b>Añadir a pantalla de inicio</b> (o <b>Instalar aplicación</b>).',and4:'Confirmá con <b>Instalar</b>. Listo 🍃.',
  other:'¿Tenés {x}?'},
- ca:{bar:'Tingues Cena com a app al mòbil',how:'Com',foot:'📲 Com posar Cena a la pantalla d\'inici',title:'Posa Cena a la pantalla d\'inici',intro:'Així l\'obres amb un toc, com qualsevol app, i s\'actualitza sola. Són 20 segons.',now:'Instal·la ara',
+ ca:{fb:'💌 Tens alguna recomanació? Envia’m un correu a <a href="mailto:agutondelli@gmail.com?subject=Cena">agutondelli@gmail.com</a> (tot i que dubto que respongui ràpid 😅)',bar:'Tingues Cena com a app al mòbil',how:'Com',foot:'📲 Com posar Cena a la pantalla d\'inici',title:'Posa Cena a la pantalla d\'inici',intro:'Així l\'obres amb un toc, com qualsevol app, i s\'actualitza sola. Són 20 segons.',now:'Instal·la ara',
  notsite:'Primer obre la web de Cena al navegador del mòbil:',
  ios:'iPhone (Safari)',ios1:'Obre Cena a <b>Safari</b>.',ios2:'Toca <b>Comparteix</b> '+'SHARE'+' (a baix; si no el veus, toca <b>···</b> i després Comparteix).',ios3:'Baixa i toca <b>Afegeix a la pantalla d\'inici</b>.',ios4:'Toca <b>Afegeix</b>. Fet, ja tens la icona 🍃.',
  and:'Android (Chrome)',and1:'Obre Cena a <b>Chrome</b>.',and2:'Toca els tres puntets <b>⋮</b> a dalt a la dreta.',and3:'Toca <b>Afegeix a la pantalla d\'inici</b> (o <b>Instal·la l\'aplicació</b>).',and4:'Confirma amb <b>Instal·la</b>. Fet 🍃.',
@@ -648,7 +650,7 @@ function helpHTML(){const h=IH[st.lang];const f=x=>h[x].replace('SHARE',SHAREG);
  const first=isIOS()?ios:and,second=isIOS()?and:ios,otherName=isIOS()?'Android':'iPhone';
  return `<p>${h.intro}</p>${onSite?'':`<p style="color:var(--ink);margin-bottom:12px">${h.notsite}<a class="urlbox" href="${SITE}" target="_blank" rel="noopener">${SITE}</a></p>`}${bip?`<button class="btn big" id="inst-now">${h.now}</button>`:''}<div class="plat">${first}</div><details class="plat"><summary>${h.other.replace('{x}',otherName)}</summary>${second.replace(/<h3>.*?<\/h3>/,'')}</details>`}
 function renderInst(){const h=IH[st.lang];const b=$('inst');if(!b)return;
- $('inst-t').textContent=h.bar;$('inst-how').textContent=h.how;$('inst-foot').textContent=h.foot;$('help-t').textContent=h.title;
+ $('inst-t').textContent=h.bar;$('inst-how').textContent=h.how;$('inst-foot').textContent=h.foot;$('help-t').textContent=h.title;$('t-fb').innerHTML=h.fb;
  b.hidden=isStandalone()||instOff();$('inst-foot').parentElement.hidden=isStandalone();
  const d=$('help');if(d.open)$('help-b').innerHTML=helpHTML()}
 function openHelp(){$('help-b').innerHTML=helpHTML();const d=$('help');try{d.showModal()}catch(e){d.setAttribute('open','')}}
@@ -660,7 +662,7 @@ document.addEventListener('click',e=>{const el=e.target.closest('button');
  else if(el.id==='help-x'){$('help').close?$('help').close():$('help').removeAttribute('open')}
  else if(el.id==='inst-now'&&bip){bip.prompt();bip.userChoice.finally(()=>{bip=null;renderInst()})}});
 render();
-const APPV='2026-11-23-20';const LOADDAY=iso(new Date());
+const APPV='2026-11-23-21';const LOADDAY=iso(new Date());
 const checkUpdate=()=>{if(iso(new Date())!==LOADDAY){location.reload();return}try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.v&&j.v!==APPV)location.reload()}).catch(()=>{})}catch(e){}};
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
 window.addEventListener('pageshow',e=>{if(e.persisted)checkUpdate()});
