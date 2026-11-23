@@ -234,6 +234,9 @@ details.plat[open] summary{margin-bottom:8px;color:var(--ink)}
 .glyph{width:20px;height:20px;vertical-align:-4px;color:#2f7cf6}
 .urlbox{display:block;margin:6px 0 2px;padding:8px 10px;border-radius:10px;background:var(--panel);border:1px dashed var(--line);font-weight:700;word-break:break-all}
 #help .btn{width:100%;margin:4px 0 12px}
+.chips{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.chip{padding:0 4px;white-space:nowrap;font-size:15px;min-height:42px}
+@media(max-width:380px){.chip{font-size:13.5px;border-width:1.5px}}
 </style>
 </head>
 <body>
@@ -496,7 +499,7 @@ document.addEventListener('click',e=>{const el=e.target.closest('button');
  else if(el.id==='help-x'){$('help').close?$('help').close():$('help').removeAttribute('open')}
  else if(el.id==='inst-now'&&bip){bip.prompt();bip.userChoice.finally(()=>{bip=null;renderInst()})}});
 render();
-const APPV='2026-11-23-11';const LOADDAY=iso(new Date());
+const APPV='2026-11-23-12';const LOADDAY=iso(new Date());
 const checkUpdate=()=>{if(iso(new Date())!==LOADDAY){location.reload();return}try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.v&&j.v!==APPV)location.reload()}).catch(()=>{})}catch(e){}};
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
 window.addEventListener('pageshow',e=>{if(e.persisted)checkUpdate()});
