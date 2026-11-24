@@ -283,10 +283,10 @@ details.plat[open] summary{margin-bottom:8px;color:var(--ink)}
 /* header v11: title big, lang top-right, tagline full width */
 .top{display:grid!important;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"brand lang" "sub sub";align-items:center;column-gap:14px;row-gap:10px}
 .top .brand{grid-area:brand}.top .langw{grid-area:lang;align-self:start}
-.top .sub{grid-area:sub;margin:0;font-size:14px;line-height:1.5;font-weight:600;opacity:.92;max-width:none}
+.top .sub{grid-area:sub;margin:0;font-size:13px;line-height:1.5;font-weight:600;opacity:.92;max-width:none}
 h1{font-size:40px!important;line-height:1!important}
 .logo{width:52px!important;height:52px!important}
-@media(max-width:600px){h1{font-size:36px!important}.logo{width:46px!important;height:46px!important}.top .sub{font-size:13.5px}}
+@media(max-width:600px){h1{font-size:36px!important}.logo{width:46px!important;height:46px!important}.top .sub{font-size:12.5px}}
 </style>
 </head>
 <body>
@@ -768,7 +768,7 @@ document.addEventListener('click',e=>{const el=e.target.closest('button');
  else if(el.id==='help-x'){$('help').close?$('help').close():$('help').removeAttribute('open')}
  else if(el.id==='inst-now'&&bip){bip.prompt();bip.userChoice.finally(()=>{bip=null;renderInst()})}});
 render();
-const APPV='2026-11-23-32';const LOADDAY=iso(new Date());
+const APPV='2026-11-23-33';const LOADDAY=iso(new Date());
 const checkUpdate=()=>{if(iso(new Date())!==LOADDAY){location.reload();return}try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.v&&j.v!==APPV)location.reload()}).catch(()=>{})}catch(e){}};
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
 window.addEventListener('pageshow',e=>{if(e.persisted)checkUpdate()});
