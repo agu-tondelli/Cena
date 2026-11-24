@@ -293,6 +293,9 @@ h1{font-size:40px!important;line-height:1!important}
 #shopsum li.past{opacity:.5;text-decoration:line-through}
 .chip:disabled{opacity:.35;filter:grayscale(.8);text-decoration:line-through;cursor:default}
 .tmw{flex-basis:100%;margin:8px 0 0;font-size:13.5px;font-weight:600;color:var(--ink);padding:8px 12px;border-radius:10px;background:color-mix(in srgb,#e8a33d 18%,var(--bg))}
+.tmo{display:flex;flex-direction:column;gap:6px;background:color-mix(in srgb,var(--olive) 10%,var(--bg))!important}
+.tmo label{display:flex;align-items:center;gap:8px;cursor:pointer}
+.tmo input{width:18px;height:18px;accent-color:var(--c);margin:0}
 </style>
 </head>
 <body>
@@ -589,7 +592,7 @@ Object.assign(MENU,EXTRA.menu);V.forEach(x=>{const lu=EXTRA.lunch[x[0]];if(lu)Ob
 let built=false;let st={v:'general',p:4,lang:'es',day:0,cday:0,ch:{},done:{},planned:{},showChg:false,tmd:{}};
 try{const s=JSON.parse(localStorage.getItem('cena_v1')||'null');if(s)st=Object.assign(st,s,{day:st.day})}catch(e){}
 const td=WEEKEND?0:DAYS.findIndex(x=>x.iso===iso(NOW));st.day=td>=0?td:0;st.cday=st.day;st.planned=st.planned||{};if(Array.isArray(st.ch))st.ch={};
-const save=()=>{try{localStorage.setItem('cena_v1',JSON.stringify({v:st.v,p:st.p,lang:st.lang,ch:st.ch,done:st.done,planned:st.planned,tm:!!st.tm,tmd:st.tmd}))}catch(e){}};
+const save=()=>{try{localStorage.setItem('cena_v1',JSON.stringify({v:st.v,p:st.p,lang:st.lang,ch:st.ch,done:st.done,planned:st.planned,tm:!!st.tm,tmd:st.tmd,tmm:st.tmm}))}catch(e){}};
 const $=id=>document.getElementById(id);
 const has=i=>!!MENU[DAYS[i].iso];
 const chOf=i=>{let c=st.ch[DAYS[i].iso]|0;if(soft()&&(c===1||c===3))c=0;if(c===3&&has(i)&&!altC(i))c=0;return c};
@@ -631,7 +634,7 @@ function optBtns(i,cls){const t=tr();const ch=chOf(i);const L2=st.lang==='es'?0:
  h+=`<button class="${cls} dl" data-w="${i}" data-v="2" aria-pressed="${ch===2}" aria-label="${t.c}">${ICO}<span>${t.c}</span></button>`;
  return h}
 function renderSemana(){const t=tr();
- $('v-semana').innerHTML=`${WEEKEND?`<p class="note" style="margin:0 0 10px">${t.wkend}</p>`:''}<h2 class="vt">${t.semT}</h2><p class="note">${t.semSub}</p><ul class="plan">${DAYS.map((d,i)=>`<li class="pday${isPast(i)?' past':''}" style="--c:var(${d.c})"${isPast(i)?' inert':''}><header><span class="hl"><b>${d[st.lang]} <em>${d.d}</em></b>${isPast(i)?`<span class="pastl">${st.lang==='es'?'Ya pasó':'Ja ha passat'}</span>`:''}${tmCan(i)?`<label class="tmh"><input type="checkbox" data-tmd="${i}"${tmDay(i)?' checked':''}><span>${TMT[st.lang].hd}${tmWarn(i)?' ⚠️':''}</span></label>`:''}</span><span class="hr"><span class="pick">${has(i)?['A','B','🛵','C'][chOf(i)]:t.pend}</span></span></header><div class="in">${has(i)?`<div class="ctx2"><div><span class="lbl">${t.lunch}</span>${lunchTxt(i)}</div><div><span class="lbl">${t.sug}</span>${soft()?t.noneShort:schoolTxt(i)}</div></div><div class="opts">${optBtns(i,'opt')}</div>${tmCan(i)&&tmWarn(i)?`<p class="tmw">🥣⚠️ Thermomix: ${tmWarn(i)}</p>`:''}${tmTick(i)}`:`<p class="lun" style="margin:0">${t.pendP}</p>`}</div></li>`).join('')}</ul><a class="btn big linkbtn" style="justify-content:center" href="#super" id="gobuild">${t.build}</a>`}
+ $('v-semana').innerHTML=`${WEEKEND?`<p class="note" style="margin:0 0 10px">${t.wkend}</p>`:''}<h2 class="vt">${t.semT}</h2><p class="note">${t.semSub}</p><ul class="plan">${DAYS.map((d,i)=>`<li class="pday${isPast(i)?' past':''}" style="--c:var(${d.c})"${isPast(i)?' inert':''}><header><span class="hl"><b>${d[st.lang]} <em>${d.d}</em></b>${isPast(i)?`<span class="pastl">${st.lang==='es'?'Ya pasó':'Ja ha passat'}</span>`:''}${tmCan(i)?`<label class="tmh"><input type="checkbox" data-tmd="${i}"${tmDay(i)?' checked':''}><span>${TMT[st.lang].hd}</span></label>`:''}</span><span class="hr"><span class="pick">${has(i)?['A','B','🛵','C'][chOf(i)]:t.pend}</span></span></header><div class="in">${has(i)?`<div class="ctx2"><div><span class="lbl">${t.lunch}</span>${lunchTxt(i)}</div><div><span class="lbl">${t.sug}</span>${soft()?t.noneShort:schoolTxt(i)}</div></div><div class="opts">${optBtns(i,'opt')}</div>${tmDay(i)&&tmCan(i)?tmOpt(i):''}${tmTick(i)}`:`<p class="lun" style="margin:0">${t.pendP}</p>`}</div></li>`).join('')}</ul><a class="btn big linkbtn" style="justify-content:center" href="#super" id="gobuild">${t.build}</a>`}
 /* === THERMOMIX (Cookidoo): nombre + ingredientes, los pasos quedan en Cookidoo === */
 Object.assign(C,{
  tm_quesocrema:['queso crema','formatge cremós','lact','g',200,'tarrina','terrina'],
@@ -675,9 +678,9 @@ Object.assign(C,{
  tm_basmati:['arroz basmati','arròs basmati','desp','g',1000,'paquete','paquet']
 });
 const TMX={
-hamb:{w:['Lleva garbanzos secos: hay que ponerlos en remojo la noche anterior.','Porta cigrons secs: cal posar-los en remull la nit abans.'],n:'Hamburguesas vegetales de soja',id:'r40267',sv:6,i:[['tm_garbsecos',100],['zanahoria',1],['champi',200],['tm_pipas',50],['tm_acsesamo',50],['tm_sojatext',70],['huevos',2],['tm_panrallado',200]]},
- pizza:{w:['Requiere amasar y dejar levar unas 2 h. Si no te da el tiempo, no tildes Thermomix y usá masa ya hecha.','Cal pastar i deixar llevar unes 2 h. Si no tens temps, no marquis Thermomix i fes servir massa ja feta.'],n:'Pizza de verduras asadas',id:'r255584',sv:4,i:[['tm_harinafuerza',450],['tm_harinainteg',75],['tm_levadura',25],['berenjena',360/350],['tm_cebroja',300],['pimverde',180/180],['pimrojo',180/200],['tm_gouda',300],['tm_alcaparras',20]]},
- calzone:{w:['Requiere amasar y dejar levar unas 2 h. Si no te da el tiempo, no tildes Thermomix y usá masa ya hecha.','Cal pastar i deixar llevar unes 2 h. Si no tens temps, no marquis Thermomix i fes servir massa ja feta.'],n:'Pizza caprichosa',id:'r51990',sv:4,i:[['tm_harinafuerza',400],['tm_levadura',20],['mozzb',250],['tomtrit',300],['alcachofa',8],['champi',50],['aceitunas',50],['anchoas',6]]},
+ hamb:{o:{a:['Con garbanzos de bote','Amb cigrons de pot'],b:['Receta original (remojo la noche anterior)','Recepta original (remull la nit abans)'],rm:['tm_garbsecos'],add:[['garbcoc',250]],na:['Con garbanzos de bote: en Cookidoo saltá el remojo y usalos escurridos.','Amb cigrons de pot: a Cookidoo salta el remull i fes-los servir escorreguts.']},w:['Receta original: los garbanzos secos van en remojo la noche anterior.','Recepta original: els cigrons secs van en remull la nit abans.'],n:'Hamburguesas vegetales de soja',id:'r40267',sv:6,i:[['tm_garbsecos',100],['zanahoria',1],['champi',200],['tm_pipas',50],['tm_acsesamo',50],['tm_sojatext',70],['huevos',2],['tm_panrallado',200]]},
+ pizza:{o:{a:['Con masa ya hecha','Amb massa ja feta'],b:['Receta original (amasar y levar 2 h)','Recepta original (pastar i llevar 2 h)'],rm:['tm_harinafuerza','tm_harinainteg','tm_levadura'],add:[['masa',2]],na:['Con masa ya hecha: en Cookidoo saltá los pasos de la masa y arrancá directo con el relleno.','Amb massa ja feta: a Cookidoo salta els passos de la massa i comença directament pel farcit.']},w:['Receta original: hay que amasar y dejar levar unas 2 h, así que arrancá con tiempo.','Recepta original: cal pastar i deixar llevar unes 2 h, així que comença amb temps.'],n:'Pizza de verduras asadas',id:'r255584',sv:4,i:[['tm_harinafuerza',450],['tm_harinainteg',75],['tm_levadura',25],['berenjena',360/350],['tm_cebroja',300],['pimverde',180/180],['pimrojo',180/200],['tm_gouda',300],['tm_alcaparras',20]]},
+ calzone:{o:{a:['Con masa ya hecha','Amb massa ja feta'],b:['Receta original (amasar y levar 2 h)','Recepta original (pastar i llevar 2 h)'],rm:['tm_harinafuerza','tm_harinainteg','tm_levadura'],add:[['masa',2]],na:['Con masa ya hecha: en Cookidoo saltá los pasos de la masa y arrancá directo con el relleno.','Amb massa ja feta: a Cookidoo salta els passos de la massa i comença directament pel farcit.']},w:['Receta original: hay que amasar y dejar levar unas 2 h, así que arrancá con tiempo.','Recepta original: cal pastar i deixar llevar unes 2 h, així que comença amb temps.'],n:'Pizza caprichosa',id:'r51990',sv:4,i:[['tm_harinafuerza',400],['tm_levadura',20],['mozzb',250],['tomtrit',300],['alcachofa',8],['champi',50],['aceitunas',50],['anchoas',6]]},
  crema:{n:'Crema de calabacín',id:'r55118',sv:4,i:[['calabacin',700/300],['cebollaf',50/150],['tm_pastcaldo',1],['mantequilla',10],['tm_quesocrema',40]]},
  lentejas:{n:'Ensalada de lentejas con brotes y aguacate',id:'r279698',sv:4,i:[['lentejas',400],['tm_aguacate',1],['limon',0.25],['tm_brotessoja',100],['tm_alfalfa',50],['tm_cebroja',200],['tm_mostaza',20],['tm_cilantro',1]]},
  pastasalt:{n:'Pasta integral con verduras y pesto de tomate',id:'r787946',sv:6,i:[['pasta',300],['parmesano',50],['tm_almendras',30],['tm_tomsecos',150],['tm_albahaca',1],['tm_alcaparras',10],['calabacin',200/300],['champi',300],['berenjena',225/350],['tm_cherry',100],['tm_canonigos',50],['feta',100]]},
@@ -698,8 +701,10 @@ hamb:{w:['Lleva garbanzos secos: hay que ponerlos en remojo la noche anterior.',
 const tmOn=()=>st.v==='general';
 const tmDay=i=>tmOn()&&!!(st.tmd||{})[DAYS[i].iso];
 const tmCan=i=>tmOn()&&has(i)&&chOf(i)!==2&&dishesFor(i,chOf(i)).some(k=>TMX[k]);
-const tmOf=(k,i)=>tmDay(i)&&TMX[k]?TMX[k]:null;
+const tmAlt=i=>(st.tmm||{})[DAYS[i].iso]!==false;
+const tmOf=(k,i)=>{if(!(tmDay(i)&&TMX[k]))return null;const tx=TMX[k];if(tx.o&&tmAlt(i))return Object.assign({},tx,{i:tx.i.filter(x=>!tx.o.rm.includes(x[0])).concat(tx.o.add),w:tx.o.na});return tx};
 const tmWarn=i=>{const L=st.lang==='es'?0:1;return dishesFor(i,chOf(i)).map(k=>TMX[k]&&TMX[k].w?TMX[k].w[L]:'').filter(Boolean)[0]||''};
+const tmOpt=i=>{const L=st.lang==='es'?0:1;const k=dishesFor(i,chOf(i)).find(k=>TMX[k]&&TMX[k].o);if(!k)return '';const o=TMX[k].o,a=tmAlt(i);return `<div class="tmw tmo"><b>🥣 Thermomix:</b><label><input type="radio" name="tmm${i}" data-tmm="${i}" value="1"${a?' checked':''}> ${o.a[L]}</label><label><input type="radio" name="tmm${i}" data-tmm="${i}" value="0"${a?'':' checked'}> ${o.b[L]}</label></div>`};
 const tmTick=i=>false?`<label class="tmday"><input type="checkbox" data-tmd="${i}"${tmDay(i)?' checked':''}><span>${TMT[st.lang].day}</span></label>`:'';
 const tmURL=id=>'https://cookidoo.es/recipes/recipe/es-ES/'+id;
 
@@ -737,7 +742,7 @@ document.addEventListener('click',e=>{const el=e.target.closest('button');if(!el
  if(el.id==='l-es'||el.id==='l-ca'){st.lang=el.id.slice(2);render();return}
  if(el.id==='clear'){st.done={};render();return}
  if(el.id==='copy'){const m=$('copied');try{navigator.clipboard.writeText(listText()).then(()=>{m.textContent=tr().copied;m.hidden=false}).catch(()=>{m.textContent=tr().nocopy;m.hidden=false})}catch(err){m.textContent=tr().nocopy;m.hidden=false}}});
-document.addEventListener('change',e=>{const el=e.target;if(el.id==='variant'){st.v=el.value;render()}else if(el.id==='people'){st.p=+el.value;render()}else if(el.id==='tm'){st.tm=el.checked;save();render()}else if(el.dataset.tmd){st.tmd=st.tmd||{};st.tmd[DAYS[+el.dataset.tmd].iso]=el.checked;save();render()}else if(el.dataset.k){st.done[el.dataset.k]=el.checked;el.closest('label').classList.toggle('done',el.checked);save()}});
+document.addEventListener('change',e=>{const el=e.target;if(el.id==='variant'){st.v=el.value;render()}else if(el.id==='people'){st.p=+el.value;render()}else if(el.id==='tm'){st.tm=el.checked;save();render()}else if(el.dataset.tmm){st.tmm=st.tmm||{};st.tmm[DAYS[+el.dataset.tmm].iso]=el.value==='1';save();render()}else if(el.dataset.tmd){st.tmd=st.tmd||{};st.tmd[DAYS[+el.dataset.tmd].iso]=el.checked;save();render()}else if(el.dataset.k){st.done[el.dataset.k]=el.checked;el.closest('label').classList.toggle('done',el.checked);save()}});
 
 /* ---- install help ---- */
 const SITE='https://agu-tondelli.github.io/Cena/';
@@ -776,7 +781,7 @@ document.addEventListener('click',e=>{const el=e.target.closest('button');
  else if(el.id==='help-x'){$('help').close?$('help').close():$('help').removeAttribute('open')}
  else if(el.id==='inst-now'&&bip){bip.prompt();bip.userChoice.finally(()=>{bip=null;renderInst()})}});
 render();
-const APPV='2026-11-23-37';const LOADDAY=iso(new Date());
+const APPV='2026-11-23-38';const LOADDAY=iso(new Date());
 const checkUpdate=()=>{if(iso(new Date())!==LOADDAY){location.reload();return}try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.v&&j.v!==APPV)location.reload()}).catch(()=>{})}catch(e){}};
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
 window.addEventListener('pageshow',e=>{if(e.persisted)checkUpdate()});
