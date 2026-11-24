@@ -287,6 +287,10 @@ details.plat[open] summary{margin-bottom:8px;color:var(--ink)}
 h1{font-size:40px!important;line-height:1!important}
 .logo{width:52px!important;height:52px!important}
 @media(max-width:600px){h1{font-size:36px!important}.logo{width:46px!important;height:46px!important}.top .sub{font-size:12.5px}}
+.pday.past{opacity:.45;filter:grayscale(.7)}
+.pday.past .tmh,.pday.past .pick,.pday.past .in{display:none}
+.pastl{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:999px;background:rgba(0,0,0,.25);color:#fff;font:800 13px/1 Nunito,sans-serif}
+#shopsum li.past{opacity:.5;text-decoration:line-through}
 </style>
 </head>
 <body>
@@ -342,6 +346,7 @@ const WD=[{es:'Lunes',ca:'Dilluns',c:'--lun'},{es:'Martes',ca:'Dimarts',c:'--mar
 const MON_ES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'],MON_CA=['gener','febrer','març','abril','maig','juny','juliol','agost','setembre','octubre','novembre','desembre'];
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const NOW=new Date();const WEEKEND=NOW.getDay()===0||NOW.getDay()===6;
+const isPast=i=>!WEEKEND&&DAYS[i].iso<iso(NOW);
 const MONDAY=(()=>{const d=new Date(NOW.getFullYear(),NOW.getMonth(),NOW.getDate());const w=d.getDay();d.setDate(d.getDate()+(w===0?1:w===6?2:1-w));return d})();
 const DAYS=WD.map((w,k)=>{const d=new Date(MONDAY);d.setDate(d.getDate()+k);return Object.assign({iso:iso(d),d:d.getDate(),m:d.getMonth()},w)});
 const T={
@@ -624,7 +629,7 @@ function optBtns(i,cls){const t=tr();const ch=chOf(i);const L2=st.lang==='es'?0:
  h+=`<button class="${cls} dl" data-w="${i}" data-v="2" aria-pressed="${ch===2}" aria-label="${t.c}">${ICO}<span>${t.c}</span></button>`;
  return h}
 function renderSemana(){const t=tr();
- $('v-semana').innerHTML=`${WEEKEND?`<p class="note" style="margin:0 0 10px">${t.wkend}</p>`:''}<h2 class="vt">${t.semT}</h2><p class="note">${t.semSub}</p><ul class="plan">${DAYS.map((d,i)=>`<li class="pday" style="--c:var(${d.c})"><header><span class="hl"><b>${d[st.lang]} <em>${d.d}</em></b>${tmCan(i)?`<label class="tmh"><input type="checkbox" data-tmd="${i}"${tmDay(i)?' checked':''}><span>${TMT[st.lang].hd}</span></label>`:''}</span><span class="hr"><span class="pick">${has(i)?['A','B','🛵','C'][chOf(i)]:t.pend}</span></span></header><div class="in">${has(i)?`<div class="ctx2"><div><span class="lbl">${t.lunch}</span>${lunchTxt(i)}</div><div><span class="lbl">${t.sug}</span>${soft()?t.noneShort:schoolTxt(i)}</div></div><div class="opts">${optBtns(i,'opt')}</div>${tmTick(i)}`:`<p class="lun" style="margin:0">${t.pendP}</p>`}</div></li>`).join('')}</ul><a class="btn big linkbtn" style="justify-content:center" href="#super" id="gobuild">${t.build}</a>`}
+ $('v-semana').innerHTML=`${WEEKEND?`<p class="note" style="margin:0 0 10px">${t.wkend}</p>`:''}<h2 class="vt">${t.semT}</h2><p class="note">${t.semSub}</p><ul class="plan">${DAYS.map((d,i)=>`<li class="pday${isPast(i)?' past':''}" style="--c:var(${d.c})"${isPast(i)?' inert':''}><header><span class="hl"><b>${d[st.lang]} <em>${d.d}</em></b>${isPast(i)?`<span class="pastl">${st.lang==='es'?'Ya pasó':'Ja ha passat'}</span>`:''}${tmCan(i)?`<label class="tmh"><input type="checkbox" data-tmd="${i}"${tmDay(i)?' checked':''}><span>${TMT[st.lang].hd}</span></label>`:''}</span><span class="hr"><span class="pick">${has(i)?['A','B','🛵','C'][chOf(i)]:t.pend}</span></span></header><div class="in">${has(i)?`<div class="ctx2"><div><span class="lbl">${t.lunch}</span>${lunchTxt(i)}</div><div><span class="lbl">${t.sug}</span>${soft()?t.noneShort:schoolTxt(i)}</div></div><div class="opts">${optBtns(i,'opt')}</div>${tmTick(i)}`:`<p class="lun" style="margin:0">${t.pendP}</p>`}</div></li>`).join('')}</ul><a class="btn big linkbtn" style="justify-content:center" href="#super" id="gobuild">${t.build}</a>`}
 /* === THERMOMIX (Cookidoo): nombre + ingredientes, los pasos quedan en Cookidoo === */
 Object.assign(C,{
  tm_quesocrema:['queso crema','formatge cremós','lact','g',200,'tarrina','terrina'],
@@ -695,9 +700,9 @@ const tmOf=(k,i)=>tmDay(i)&&TMX[k]?TMX[k]:null;
 const tmTick=i=>false?`<label class="tmday"><input type="checkbox" data-tmd="${i}"${tmDay(i)?' checked':''}><span>${TMT[st.lang].day}</span></label>`:'';
 const tmURL=id=>'https://cookidoo.es/recipes/recipe/es-ES/'+id;
 
-function shopData(){const tot={};DAYS.forEach((d,i)=>{dishesFor(i,chOf(i)).forEach(k=>{const tx=tmOf(k,i);if(tx)tx.i.forEach(x=>{tot[x[0]]=(tot[x[0]]||0)+x[1]*st.p/tx.sv});else D[k].i.forEach(x=>{const kk=sub(x[0]);tot[kk]=(tot[kk]||0)+x[1]*st.p/4})})});return tot}
+function shopData(){const tot={};DAYS.forEach((d,i)=>{if(isPast(i))return;dishesFor(i,chOf(i)).forEach(k=>{const tx=tmOf(k,i);if(tx)tx.i.forEach(x=>{tot[x[0]]=(tot[x[0]]||0)+x[1]*st.p/tx.sv});else D[k].i.forEach(x=>{const kk=sub(x[0]);tot[kk]=(tot[kk]||0)+x[1]*st.p/4})})});return tot}
 function renderSuper(){const t=tr();$('supsub').textContent=t.supSub.replace('{n}',st.p);
- $('shopsum').innerHTML=DAYS.map((d,i)=>{const ds=dishesFor(i,chOf(i));return `<li style="--c:var(${d.c})"><span class="dot"></span><span><b>${d[st.lang].slice(0,3)} ${d.d}</b> · ${!has(i)?t.pend:ds.length?dn(ds)+(tmDay(i)&&ds.some(k=>TMX[k])?' · 🥣 Thermomix':''):'Delivery 🛵'}</span></li>`}).join('');
+ $('shopsum').innerHTML=DAYS.map((d,i)=>{const ds=dishesFor(i,chOf(i));return `<li style="--c:var(${d.c})"${isPast(i)?' class="past"':''}><span class="dot"></span><span><b>${d[st.lang].slice(0,3)} ${d.d}</b> · ${isPast(i)?(st.lang==='es'?'ya pasó, no suma a la lista':'ja ha passat, no compta a la llista'):!has(i)?t.pend:ds.length?dn(ds)+(tmDay(i)&&ds.some(k=>TMX[k])?' · 🥣 Thermomix':''):'Delivery 🛵'}</span></li>`}).join('');
  const tot=shopData();const secs={};Object.keys(tot).forEach(k=>{(secs[C[k][2]]=secs[C[k][2]]||[]).push(k)});
  $('shop').innerHTML=['cong','verd','carne','lact','desp'].filter(x=>secs[x]).map(x=>`<h3>${SEC[x][st.lang]}</h3>`+secs[x].map(k=>{const c=C[k];const q=round(tot[k],c[3]);const on=!!st.done[k];const tp=TIP[k]?TIP[k][st.lang==='es'?0:1]:'';return `<label class="${on?'done':''}"><input type="checkbox" data-k="${k}"${on?' checked':''}><span>${nm(k).charAt(0).toUpperCase()+nm(k).slice(1)}${tp?`<span class="tip">💡 ${tp}</span>`:''}</span><span class="q">${qty(k,q)}</span></label>`}).join('')).join('')||`<p class="note">${t.empty}</p>`;
  $('pantry').textContent=t.pantry+PANTRY[st.lang]}
@@ -768,7 +773,7 @@ document.addEventListener('click',e=>{const el=e.target.closest('button');
  else if(el.id==='help-x'){$('help').close?$('help').close():$('help').removeAttribute('open')}
  else if(el.id==='inst-now'&&bip){bip.prompt();bip.userChoice.finally(()=>{bip=null;renderInst()})}});
 render();
-const APPV='2026-11-23-33';const LOADDAY=iso(new Date());
+const APPV='2026-11-23-34';const LOADDAY=iso(new Date());
 const checkUpdate=()=>{if(iso(new Date())!==LOADDAY){location.reload();return}try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.v&&j.v!==APPV)location.reload()}).catch(()=>{})}catch(e){}};
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
 window.addEventListener('pageshow',e=>{if(e.persisted)checkUpdate()});
