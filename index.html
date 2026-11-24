@@ -291,6 +291,7 @@ h1{font-size:40px!important;line-height:1!important}
 .pday.past .tmh,.pday.past .pick,.pday.past .in{display:none}
 .pastl{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:999px;background:rgba(0,0,0,.25);color:#fff;font:800 13px/1 Nunito,sans-serif}
 #shopsum li.past{opacity:.5;text-decoration:line-through}
+.chip:disabled{opacity:.35;filter:grayscale(.8);text-decoration:line-through;cursor:default}
 </style>
 </head>
 <body>
@@ -713,8 +714,8 @@ const tmQ=(k,q)=>{const u=C[k][3];if(u==='u'&&GPU[k])return Math.max(10,Math.rou
 function tmDish(k,r,tx){const T=TMT[st.lang],t=tr();const cap=x=>x.charAt(0).toUpperCase()+x.slice(1);
  return `<div class="dish"><h4>${r[st.lang]}</h4><div class="tmbox"><p>🥣 ${T.in} <b>«${tx.n}»</b> ${T.inC}</p><a class="btn linkbtn" href="${tmURL(tx.id)}" target="_blank" rel="noopener">${T.open}</a></div><h5>${t.ing}</h5><p class="note" style="margin:0 0 8px">${T.nt.replace('{p}',st.p).replace('{s}',tx.sv)}</p><ul class="ing">${tx.i.map(x=>`<li>${cap(nm(x[0]))}: <b>${tmQ(x[0],x[1]*st.p/tx.sv)}</b></li>`).join('')}<li class="pan">${T.pan}</li></ul></div>`}
 function renderTM(){const T=TMT[st.lang];const el=$('tm');if(!el)return;/*removed*/const g=st.v==='general';el.checked=!!st.tm&&g;el.disabled=!g;$('t-tm').textContent=T.tg+(g?'':T.only);$('tmw').classList.toggle('off',!g)}
-function renderCocinar(){const t=tr();const i=st.cday,d=DAYS[i];const ch=chOf(i);const ds=dishesFor(i,ch);
- const chips=`<div class="chips">${DAYS.map((x,j)=>`<button class="chip" style="--c:var(${x.c})" data-cd="${j}" aria-pressed="${j===i}">${x[st.lang].slice(0,3)} ${x.d}</button>`).join('')}</div>`;
+function renderCocinar(){const t=tr();if(isPast(st.cday)){st.cday=DAYS.findIndex((x,j)=>!isPast(j));if(st.cday<0)st.cday=4}const i=st.cday,d=DAYS[i];const ch=chOf(i);const ds=dishesFor(i,ch);
+ const chips=`<div class="chips">${DAYS.map((x,j)=>`<button class="chip" style="--c:var(${x.c})" data-cd="${j}" aria-pressed="${j===i}"${isPast(j)?' disabled title="'+(st.lang==='es'?'Ya pasó':'Ja ha passat')+'"':''}>${x[st.lang].slice(0,3)} ${x.d}</button>`).join('')}</div>`;
  const wk=WEEKEND&&i===0?`<p class="note" style="margin:0 0 10px">${t.wkend2}</p>`:'';
  let inner;
  if(!has(i))inner=`<div class="cardhead"><p>${d[st.lang]} ${d.d}</p><h2>${t.pendT}</h2></div><div class="cardbody"><p>${t.pendP}</p></div>`;
@@ -773,7 +774,7 @@ document.addEventListener('click',e=>{const el=e.target.closest('button');
  else if(el.id==='help-x'){$('help').close?$('help').close():$('help').removeAttribute('open')}
  else if(el.id==='inst-now'&&bip){bip.prompt();bip.userChoice.finally(()=>{bip=null;renderInst()})}});
 render();
-const APPV='2026-11-23-34';const LOADDAY=iso(new Date());
+const APPV='2026-11-23-35';const LOADDAY=iso(new Date());
 const checkUpdate=()=>{if(iso(new Date())!==LOADDAY){location.reload();return}try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.v&&j.v!==APPV)location.reload()}).catch(()=>{})}catch(e){}};
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
 window.addEventListener('pageshow',e=>{if(e.persisted)checkUpdate()});
