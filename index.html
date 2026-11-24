@@ -280,14 +280,21 @@ details.plat[open] summary{margin-bottom:8px;color:var(--ink)}
 .tmh input{width:16px;height:16px;margin:0;accent-color:#fff;flex:none}
 .tmh:has(input:checked){background:#fff;color:var(--c)}
 .tmh:has(input:checked) input{accent-color:var(--c)}
+/* header v11: title big, lang top-right, tagline full width */
+.top{display:grid!important;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"brand lang" "sub sub";align-items:center;column-gap:14px;row-gap:10px}
+.top .brand{grid-area:brand}.top .langw{grid-area:lang;align-self:start}
+.top .sub{grid-area:sub;margin:0;font-size:15px;line-height:1.5;font-weight:600;opacity:.92;max-width:none}
+h1{font-size:40px!important;line-height:1!important}
+.logo{width:52px!important;height:52px!important}
+@media(max-width:600px){h1{font-size:36px!important}.logo{width:46px!important;height:46px!important}.top .sub{font-size:14.5px}}
 </style>
 </head>
 <body>
 <header>
   <div class="wrap top">
-    <div class="brand"><svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#fff"/><circle cx="24" cy="24" r="15" fill="none" stroke="#e3ecd2" stroke-width="2"/><g transform="translate(24 24) rotate(-35)"><path d="M0-10C6-6 6 6 0 10-6 6-6-6 0-10Z" fill="#7cb342"/><path d="M0-9V9" stroke="#4f7a17" stroke-width="1.2" stroke-linecap="round"/></g><circle cx="30" cy="16.5" r="3.4" fill="#3f6512"/></svg><div><h1>Cena</h1>
-      <p class="sub" id="t-sub">Planificá la semana, te doy la lista del súper y cocinamos la cena juntos. Sábado temprano habilito la semana siguiente 😉</p></div></div>
+    <div class="brand"><svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#fff"/><circle cx="24" cy="24" r="15" fill="none" stroke="#e3ecd2" stroke-width="2"/><g transform="translate(24 24) rotate(-35)"><path d="M0-10C6-6 6 6 0 10-6 6-6-6 0-10Z" fill="#7cb342"/><path d="M0-9V9" stroke="#4f7a17" stroke-width="1.2" stroke-linecap="round"/></g><circle cx="30" cy="16.5" r="3.4" fill="#3f6512"/></svg><div><h1>Cena</h1></div></div>
     <div class="langw"><span class="seg" role="group" aria-label="Idioma"><button id="l-es" aria-pressed="true">ES</button><button id="l-ca" aria-pressed="false">CA</button></span><span id="t-lang" hidden>Idioma</span></div>
+    <p class="sub" id="t-sub">Planificá la semana, te doy la lista del súper y cocinamos la cena juntos. Sábado temprano habilito la semana siguiente 😉</p>
   </div>
 </header>
 <div class="wrap tools">
@@ -761,7 +768,7 @@ document.addEventListener('click',e=>{const el=e.target.closest('button');
  else if(el.id==='help-x'){$('help').close?$('help').close():$('help').removeAttribute('open')}
  else if(el.id==='inst-now'&&bip){bip.prompt();bip.userChoice.finally(()=>{bip=null;renderInst()})}});
 render();
-const APPV='2026-11-23-30';const LOADDAY=iso(new Date());
+const APPV='2026-11-23-31';const LOADDAY=iso(new Date());
 const checkUpdate=()=>{if(iso(new Date())!==LOADDAY){location.reload();return}try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.v&&j.v!==APPV)location.reload()}).catch(()=>{})}catch(e){}};
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
 window.addEventListener('pageshow',e=>{if(e.persisted)checkUpdate()});
