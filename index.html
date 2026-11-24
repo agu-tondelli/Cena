@@ -680,14 +680,11 @@ const TMX={
  huevo:{n:'Huevos revueltos',id:'r362120',sv:2,i:[['huevos',5],['mantequilla',20],['tm_pan',2]]},
  enspatata:{n:'Ensalada campera',id:'r40206',sv:4,i:[['patata',600],['huevos',4],['perejil',1],['cebolleta',100],['pimverde',1],['pimrojo',0.5],['tomate',1.5],['aceitunas',50],['atun',160]]},
  merluza:{n:'Lubina al vapor con brócoli y vinagreta de encurtidos',id:'r508026',sv:4,i:[['lubina',2],['tm_brocoli',600],['cebollaf',100/150],['aceitunas',50],['tm_pepinillos',50],['tm_pimconserva',60]]},
- hamb:{n:'Hamburguesas vegetales de soja',id:'r40267',sv:6,i:[['tm_garbsecos',100],['zanahoria',1],['champi',200],['tm_pipas',50],['tm_acsesamo',50],['tm_sojatext',70],['huevos',2],['tm_panrallado',200]]},
  tortveg:{n:'Tortilla de patata (sin huevo)',id:'r89559',sv:6,i:[['patata',550],['garbanzo',60],['harinamaiz',60],['cebollaf',200/150]]},
  sopa:{n:'Sopa de picadillo con fideos',id:'r284379',sv:6,i:[['caldo',1200],['fideos',100],['pollo',200],['tm_serrano',100],['huevos',3],['tm_hierbabuena',1],['tm_picatostes',100]]},
  wokfid:{n:'Fideos chinos con verduras al curry',id:'r124269',sv:4,i:[['fideoschinos',250],['pimrojo',100/200],['pimverde',100/180],['judiasv',100],['tm_curry',5],['tm_lechecoco',400],['tm_acsesamo',10],['lima',0.25],['tm_sesamo',20]]},
  pollo:{n:'Muslos de pollo con salsa de ajillo',id:'r87148',sv:4,i:[['muslos',7],['tm_harina',30],['vino',150],['tm_pastcaldo',1],['limon',0.5],['perejil',0.5]]},
  salteado:{n:'Verduras salteadas',id:'r557356',sv:2,i:[['pimrojo',100/200],['pimverde',100/180],['tm_cebroja',100],['zanahoria',1.5]]},
- pizza:{n:'Pizza de verduras asadas',id:'r255584',sv:4,i:[['tm_harinafuerza',450],['tm_harinainteg',75],['tm_levadura',25],['berenjena',360/350],['tm_cebroja',300],['pimverde',180/180],['pimrojo',180/200],['tm_gouda',300],['tm_alcaparras',20]]},
- calzone:{n:'Pizza caprichosa',id:'r51990',sv:4,i:[['tm_harinafuerza',400],['tm_levadura',20],['mozzb',250],['tomtrit',300],['alcachofa',8],['champi',50],['aceitunas',50],['anchoas',6]]},
  arrozsalt:{n:'Arroz en su punto con verduras',id:'r806405',sv:4,i:[['cebollaf',150/150],['pimrojo',75/200],['pimverde',75/180],['champi',150],['calabacin',100/300],['judiasv',150],['vino',120],['tm_pastcaldo',1],['caldo',400]]},
  garbanz:{n:'Guiso de garbanzos con verduras',id:'r29527',sv:6,i:[['garbcoc',800],['puerro',80/250],['zanahoria',1.5],['tm_chorizo',150],['caldo',750],['patata',200]]},
  quesadilla:{n:'Quesadillas de pavo y aguacate',id:'r142170',sv:6,i:[['tortillas',6],['tm_pavo',500],['tm_aguacate',2],['lima',3],['limon',0.5],['jengibre',10],['tm_menta',1],['lechuga',0.25]]},
@@ -774,7 +771,7 @@ document.addEventListener('click',e=>{const el=e.target.closest('button');
  else if(el.id==='help-x'){$('help').close?$('help').close():$('help').removeAttribute('open')}
  else if(el.id==='inst-now'&&bip){bip.prompt();bip.userChoice.finally(()=>{bip=null;renderInst()})}});
 render();
-const APPV='2026-11-23-35';const LOADDAY=iso(new Date());
+const APPV='2026-11-23-36';const LOADDAY=iso(new Date());
 const checkUpdate=()=>{if(iso(new Date())!==LOADDAY){location.reload();return}try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.v&&j.v!==APPV)location.reload()}).catch(()=>{})}catch(e){}};
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
 window.addEventListener('pageshow',e=>{if(e.persisted)checkUpdate()});
