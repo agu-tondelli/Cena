@@ -16,5 +16,12 @@ Cada vez que llega el PDF del menú de L'Olivera (Paidos), se hace todo de una v
    - más de 45 minutos un día de semana;
    - ingredientes difíciles de conseguir.
    La idea es que la familia decida antes de comprar, por ejemplo entre harina y levadura o una masa ya hecha.
-5. **Probar** cada día con A, B, C y Thermomix, en todas las variantes y en las tres pestañas.
-6. **Subir la versión**: incrementar `APPV` y `version.json`.
+5. **Porciones para 4 (2 adultos + 2 chicos)**. Cada cena tiene 2 platos, así que cada uno es medio plato. Las webs suelen dar cantidades para 6 u 8, o de plato principal: siempre hay que reescalar. Valores de referencia:
+   - carne o pescado: 450–600 g (lomos y filetes: uno por persona; muslos: 6);
+   - huevos: hasta 6;
+   - pasta o arroz en seco: 200–300 g;
+   - patata de guarnición: 500–700 g;
+   - verdura de guarnición: 400–700 g; para crema o horno, hasta 1 kg (reduce).
+   Correr `node check-porciones.js`, que tiene que dar ✅ antes de publicar.
+6. **Probar** cada día con A, B, C y Thermomix, en todas las variantes y en las tres pestañas.
+7. **Subir la versión**: incrementar `APPV` y `version.json`.
